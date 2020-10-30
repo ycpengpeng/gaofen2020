@@ -1,0 +1,8 @@
+prefix=/usr/local
+
+Name: gaofen2020
+Description: Description of gaofen2020
+Version: 0.0.0
+Cflags: 
+Libs: -L/usr/local/lib 
+Requires: 

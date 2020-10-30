@@ -1,0 +1,1 @@
+/usr/bin/c++ -fPIC -g  -shared -Wl,-soname,libgtest.so -o libgtest.so CMakeFiles/gtest.dir/src/gtest-all.cc.o   -L/home/uav/wzy_ws/src/gaofen2020/cmake-build-debug/gtest/googlemock/gtest/src  -Wl,-rpath,/home/uav/wzy_ws/src/gaofen2020/cmake-build-debug/gtest/googlemock/gtest/src -lpthread 

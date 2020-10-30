@@ -1,0 +1,8 @@
+prefix=/home/uav/wzy_ws/src/gaofen2020/cmake-build-debug/devel
+
+Name: gaofen2020
+Description: Description of gaofen2020
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/uav/wzy_ws/src/gaofen2020/cmake-build-debug/devel/lib 
+Requires: 
