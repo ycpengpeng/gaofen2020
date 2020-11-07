@@ -6,6 +6,7 @@
  * topic variable
  */
 geometry_msgs::PoseStamped dronePoseLp;
+geometry_msgs::PoseStamped dronePoseCurrent;
 nav_msgs::Odometry dronePoseT265;
 geometry_msgs::PoseStamped droneDownCameraPose;
 geometry_msgs::PoseStamped visionPose;

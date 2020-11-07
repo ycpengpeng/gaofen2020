@@ -29,6 +29,7 @@ extern geometry_msgs::Quaternion euler2quaternion(float roll, float pitch, float
  * topic variable
  */
 extern geometry_msgs::PoseStamped dronePoseLp;
+extern geometry_msgs::PoseStamped dronePoseCurrent;
 extern nav_msgs::Odometry dronePoseT265;
 extern geometry_msgs::PoseStamped droneDownCameraPose;
 extern geometry_msgs::PoseStamped visionPose;
@@ -65,12 +66,14 @@ extern void update_drift(int numberLoop);
 
 extern bool go_to_loop(int numberLoop);
 extern void setFrontPva(int numberLoop);
+extern void setTakeOffPva();
 extern void setCenterPva(int numberLoop);
 
-extern int loopSte;
+extern int loopStep;
 extern double frontLoopDistance;
 extern double behindLoopDistance;
 extern double height;
+extern double velocityX;
 
 extern double frontPoints[6][10];
 extern double blindPoints[4][10];
@@ -97,6 +100,7 @@ extern Eigen::Vector2d hover2homeDrift;
 //
 extern Eigen::Vector3d drift;
 extern int hoverFunCount;
+//extern double takeOffHeight;
 extern bool get_yaw_fun();
 extern bool take_off_func();
 extern bool hover_and_adjust_func();

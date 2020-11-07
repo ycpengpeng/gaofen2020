@@ -19,8 +19,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+        dynamic_reconfigure
 )
 
+generate_dynamic_reconfigure_options(
+        cfg/pid.cfg
+        cfg/pid_ground.cfg
+)
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -123,15 +128,18 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(
- include
- lib
-  ${catkin_INCLUDE_DIRS}
-)
 
+
+include_directories(
+        include
+        lib
+        "../../devel/include"
+        ${catkin_INCLUDE_DIRS}
+)
 add_library(gaofenLib
         include/gaofen2020/ros_related.h
         include/gaofen2020/common_usage.h
+
         lib/core.h
         lib/core.cpp
         lib/prepare.cpp
@@ -141,6 +149,10 @@ add_library(gaofenLib
         lib/ros_callback.cpp
         lib/landing_off.cpp
         )
+
+
+
+
 ##
 #
 #
@@ -152,6 +164,13 @@ target_link_libraries(gaofenLib ${catkin_LIBRARIES})
 
 add_executable(decisionV1 src/decisionV1.cpp)
 target_link_libraries(decisionV1 gaofenLib)
+
+add_executable(gf_actuator src/gf_actuator.cpp)
+target_include_directories(gf_actuator PUBLIC ${PROJECT_SOURCE_DIR}/include/gaofen2020)
+target_link_libraries(gf_actuator ${catkin_LIBRARIES})
+
+add_executable(gf_tracker src/gf_tracker.cpp)
+target_link_libraries(gf_tracker ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

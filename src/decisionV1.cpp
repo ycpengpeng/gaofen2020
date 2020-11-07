@@ -17,7 +17,7 @@ void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "decisionV1");
-    ros::Rate rate(30);
+    ros::Rate rate(40);
 
     ros_callback_func();
     /**
