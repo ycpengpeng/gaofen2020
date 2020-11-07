@@ -7,26 +7,33 @@
 using namespace std;
 using namespace Eigen;
 
-
+void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg);
+void stateHeightCb(const mavros_msgs::Altitude::ConstPtr &msg);
+void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+void stateModeCb(const mavros_msgs::State::ConstPtr& msg);
+void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "decisionV1");
     ros::Rate rate(30);
+
     ros_callback_func();
     /**
      * main loop
      */
 
     while(ros::ok())
-    {   ros::spinOnce();
+    {
+        ros::spinOnce();
         switch (stateStep) {
             case 0: if(get_yaw_fun()){
                 stateStep += 1;
             }
             break;
 
-            case 1: if(take_off_fun()){
+            case 1: if(take_off_func()){
                 stateStep += 1;
             }
             break;
@@ -36,8 +43,66 @@ int main(int argc, char **argv) {
             }
             break;
 
+            ///first loop
             case 3: if(go_to_loop(0)){
                 stateStep += 1;
+            }
+            break;
+
+            ///second loop
+            case 4: if(go_to_loop(1)){
+                    stateStep += 1;
+            }
+            break;
+
+            ///third loop
+            case 5: if(go_to_loop(2)){
+                    stateStep += 1;
+            }
+            break;
+
+            ///forth loop
+            case 6: if(go_to_loop(3)){
+                    stateStep += 1;
+            }
+            break;
+
+            ///blind flight
+            case 7: if(blind_fly(0)){
+                    stateStep +=1;
+            }
+            break;
+
+            case 8: if(blind_fly(1)){
+                    stateStep +=1;
+                }
+            break;
+
+            case 9: if(blind_fly(2)){
+                    stateStep +=1;
+                }
+            break;
+
+            case 10: if(blind_fly(3)){
+                    stateStep +=1;
+                }
+            break;
+
+            ///fifth loop
+            case 11: if(go_to_loop(4)){
+                    stateStep +=1;
+            }
+            break;
+
+            ///sixth loop
+            case 12: if(go_to_loop(5)){
+                    stateStep +=1;
+            }
+            break;
+
+            ///land off
+            case 13: if(land_off(landOffStep)){
+                    stateStep +=1;
             }
             break;
 
@@ -46,8 +111,6 @@ int main(int argc, char **argv) {
         rate.sleep();
     }
 
-
-
+    return 0;
 
 }
-

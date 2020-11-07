@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(gaofen2020)
-
+SET( CMAKE_CXX_FLAGS "-std=c++11 -O3")
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
 
@@ -124,13 +124,29 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
- include lib
+ include
+ lib
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library( gaofenLib
-        lib/prepare.cpp src/decisionV1.cpp lib/core.h lib/common.cpp lib/ros_callback.cpp lib/jump_loops.cpp)
-
+add_library(gaofenLib
+        include/gaofen2020/ros_related.h
+        include/gaofen2020/common_usage.h
+        lib/core.h
+        lib/core.cpp
+        lib/prepare.cpp
+        lib/jump_loops.cpp
+        lib/blind_flying.cpp
+        lib/common.cpp
+        lib/ros_callback.cpp
+        lib/landing_off.cpp
+        )
+##
+#
+#
+#
+#
+#
 
 target_link_libraries(gaofenLib ${catkin_LIBRARIES})
 

@@ -4,20 +4,26 @@
 #include "core.h"
 
 /**
- * callback_function
+ * ros_callback.cpp
  */
-void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
-void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg);
-void stateHeightCb(const mavros_msgs::Altitude::ConstPtr &msg);
-void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
-void stateModeCb(const mavros_msgs::State::ConstPtr& msg);
-void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
+ros::Subscriber subStateVision;
+ros::Subscriber subStateT265;
+ros::Subscriber subStateHeight;
+ros::Subscriber subStatePose;
+ros::Subscriber subStateMode;
+ros::Subscriber subStateDownCamerePose;
+
+ros::Publisher pubPx4Point;
+ros::Publisher pubTargetPoint;
+ros::Publisher pubPvaTargetPoint;
+ros::Publisher pubDroneCurrentPose;
+
 
 void ros_callback_func(){
     ros::NodeHandle nh;
 
     /**
-     * topic subscriber and publisher
+     * topic subscriber
      */
     subStateVision = nh.subscribe<geometry_msgs::PoseStamped>("/topicStateVision",1,stateVisionCb);
     subStateT265 = nh.subscribe<nav_msgs::Odometry>("/camera/odometry",1,stateT265Cb);
@@ -26,16 +32,18 @@ void ros_callback_func(){
     subStateMode = nh.subscribe<mavros_msgs::State>("/mavros/state", 1, stateModeCb);
     subStateDownCamerePose = nh.subscribe<geometry_msgs::PoseStamped>("/zzw",1,stateDownCamerePoseCb);
 
+    /**
+     * topic publisher
+     */
     pubTargetPoint = nh.advertise<geometry_msgs::PoseStamped>("/topicTargetPoint",1);
     pubPx4Point = nh.advertise<geometry_msgs::PoseStamped>("/mavros/setpoint_position/local",1);
-    pubPvaTargetPoint = nh.advertise<trajectory_msgs::JointTrajectoryPoint>("/topicPvaTarget",1);
-    pubCurrentPose = nh.advertise<geometry_msgs::PoseStamped>("/topicDroneCurrentPose",1);
+    pubPvaTargetPoint = nh.advertise<trajectory_msgs::JointTrajectoryPoint>("/topicPvaTargetPoint",1);
+    pubDroneCurrentPose = nh.advertise<geometry_msgs::PoseStamped>("/topicDroneCurrentPose",1);
 }
 
 /**
  * callback_function
  */
-
 
 void stateModeCb(const mavros_msgs::State::ConstPtr& msg){
     currentStateMsg = *msg;
@@ -45,12 +53,14 @@ void stateModeCb(const mavros_msgs::State::ConstPtr& msg){
 
 
 void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
-
+    visionPose = *msg;
 }
 
 
 void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg){
     dronePoseT265 = *msg;
+    dronePoseLp.pose.position.x = dronePoseT265.pose.pose.position.x;
+    dronePoseLp.pose.position.y = dronePoseT265.pose.pose.position.y;
 }
 
 
@@ -77,8 +87,6 @@ void stateHeightCb(const mavros_msgs::Altitude::ConstPtr &msg){
 
 void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
     dronePoseLp = *msg;
-    dronePoseLp.pose.position.x += drift.x();  //发给pp
-    dronePoseLp.pose.position.y += drift.y();
 }
 
 
