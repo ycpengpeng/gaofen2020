@@ -36,8 +36,8 @@ bool land_off(int landOffStep)
 //check if drone has arrived the blind target point
 
 bool isArrivedLand(int landPoint){
-    if(abs(dronePoseLp.pose.position.x-landOffPoints[landPoint][0]+drift.x())<0.1 &&
-       abs(dronePoseLp.pose.position.y-landOffPoints[landPoint][1]+drift.y())<0.1 &&
+    if(abs(dronePoseLp.pose.position.x-landOffPoints[landPoint][0]-drift.x())<0.1 &&
+       abs(dronePoseLp.pose.position.y-landOffPoints[landPoint][1]-drift.y())<0.1 &&
        abs(planeCurrHeight-landOffPoints[landPoint][2]+drift.z())<0.1)
         return true;
     else
@@ -47,7 +47,8 @@ bool isArrivedLand(int landPoint){
 /**
  * set blindPoint value in front of loop
  */
-void setLandPva(int landOffStep){
+void setLandPva(int landOffStep)
+{
     pvaTargetPointMsg.positions.clear();
     pvaTargetPointMsg.velocities.clear();
     pvaTargetPointMsg.accelerations.clear();

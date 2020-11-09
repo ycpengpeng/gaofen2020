@@ -30,9 +30,9 @@ bool blind_fly(int blindPoint)
         ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
     }
     update_drift(blindPoint);
-    drift.x() =  0;
+    /*drift.x() =  0;
     drift.y() = 0;
-    drift.z() = 0;
+    drift.z() = 0;*/
     setBlindPva(blindPoint);
     pubPvaTargetPoint.publish(pvaTargetPointMsg);
     if(isArrivedBlind(blindPoint))

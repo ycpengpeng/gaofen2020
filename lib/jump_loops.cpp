@@ -20,8 +20,8 @@ Eigen::Matrix<float,6,1> loop_height;
 loop_height<<1.8,1.4,1.8,1.4,1.4,1.4;*/
 
 
-double loop_height[6]={1.8,1.8,1.8,1.8,1.8,1.8};
-double loop_radius[6]={0.75,0.75,0.75,0.75,0.75,0.75};
+double loop_height[6]={1.8,1.4,1.8,1.8,1.4,1.8};
+double loop_radius[6]={0.75,0.75,0.6,0.6,0.75,0.75};
 
 double frontPoints[6][10] =
         {
@@ -32,7 +32,6 @@ double frontPoints[6][10] =
                 {9.5 - frontLoopDistance, 2.5 , loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
                 {13.5- frontLoopDistance, 2   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
                 {18-frontLoopDistance , -2.8,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
-
         };
 
 double centerPoints[7][10] =
@@ -94,9 +93,9 @@ bool go_to_loop(int numberLoop)
     {
         update_drift(numberLoop);
         ///TODO ONLY IN SIMULATION
-        drift.x() =  0;
+/*        drift.x() =  0;
         drift.y() = 0;
-        drift.z() = 0;
+        drift.z() = 0;*/
         setFrontPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedFront(numberLoop))
@@ -112,9 +111,9 @@ bool go_to_loop(int numberLoop)
     {
         update_drift(numberLoop);
         ///TODO ONLY IN SIMULATION
-        drift.x() =  0;
+/*        drift.x() =  0;
         drift.y() = 0;
-        drift.z() = 0;
+        drift.z() = 0;*/
         setCenterPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedCenter(numberLoop))
@@ -275,9 +274,9 @@ void update_drift(int numberLoop)
     drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
 
 
-    drift.x() =  0;
+/*    drift.x() =  0;
     drift.y() = 0;
-    drift.z() = 0;
+    drift.z() = 0;*/
     //ROS_INFO("visionPose.pose.position.x:%f",visionPose.pose.position.x);
 
 

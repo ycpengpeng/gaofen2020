@@ -10,9 +10,7 @@ int COUNT_QUAN=1;
 mavros_msgs::State current_state;
 ros::Publisher pva_pub;
 
-
 euler ang;
-
 pva_table *table = (pva_table*)malloc(sizeof(pva_table));
 
 MatrixXd p_t, v_t, a_t;
