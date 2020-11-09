@@ -1,10 +1,12 @@
 <launch>
 
 	<!-- Turtlesim Node-->
-	<node pkg="pva_tracker" type="pub_zuan_quan" name="pub_zuan_quan" />
+	<node pkg="gaofen2020" type="decisionV1" name="decisionV1" output="screen"/>
 
-	<node pkg="pva_tracker" type="plan_zuan_quan" name="plan_zuan_quan" output="screen"/>
+	<node pkg="gaofen2020" type="gf_actuator" name="gf_actuator" output="screen"/>
+
 		<!--rosparam file="/home/pengpeng/catkin_ws/src/pva_tracker/cfg/pengpeng.yaml" command="load"/-->
+
 	<node pkg="pva_tracker" type="tracker" name="tracker" />
 
 

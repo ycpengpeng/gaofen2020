@@ -19,13 +19,13 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
-        dynamic_reconfigure
+#[[        dynamic_reconfigure]]
 )
 
-generate_dynamic_reconfigure_options(
+#[[generate_dynamic_reconfigure_options(
         cfg/pid.cfg
         cfg/pid_ground.cfg
-)
+)]]
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -169,8 +169,8 @@ add_executable(gf_actuator src/gf_actuator.cpp)
 target_include_directories(gf_actuator PUBLIC ${PROJECT_SOURCE_DIR}/include/gaofen2020)
 target_link_libraries(gf_actuator ${catkin_LIBRARIES})
 
-add_executable(gf_tracker src/gf_tracker.cpp)
-target_link_libraries(gf_tracker ${catkin_LIBRARIES})
+#[[add_executable(gf_tracker src/gf_tracker.cpp)
+target_link_libraries(gf_tracker ${catkin_LIBRARIES})]]
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}

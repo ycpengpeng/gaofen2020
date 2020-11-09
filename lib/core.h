@@ -77,7 +77,7 @@ extern double velocityX;
 
 extern double frontPoints[6][10];
 extern double blindPoints[4][10];
-extern double centerPoints[6][10];
+extern double centerPoints[7][10];
 extern trajectory_msgs::JointTrajectoryPoint pvaTargetPointMsg;
 
 

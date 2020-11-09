@@ -9,16 +9,41 @@ int blindStep = 0;
 
 bool blind_fly(int blindPoint)
 {
-        update_drift(blindPoint);
-        setBlindPva(blindPoint);
-        pubPvaTargetPoint.publish(pvaTargetPointMsg);
-        if(isArrivedBlind(blindPoint))
-        {
-            blindStep++;
-            return true;
-        }
-        else
-            return false;
+    if(blindPoint==0)
+    {
+        ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
+    }
+    if(blindPoint==1)
+    {
+        ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
+    }
+    if(blindPoint==2)
+    {
+        ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
+    }
+    if(blindPoint==3)
+    {
+        ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
+    }
+    if(blindPoint==4)
+    {
+        ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
+    }
+    update_drift(blindPoint);
+    drift.x() =  0;
+    drift.y() = 0;
+    drift.z() = 0;
+    setBlindPva(blindPoint);
+    pubPvaTargetPoint.publish(pvaTargetPointMsg);
+    if(isArrivedBlind(blindPoint))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
 
@@ -32,8 +57,8 @@ void setBlindPva(int blindPoint){
     pvaTargetPointMsg.effort.clear();
 
     pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][0]-drift.x());
-    pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][1]+drift.y());
-    pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][2]+drift.z());
+    pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][1]-drift.y());
+    pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][2]-drift.z());
     pvaTargetPointMsg.positions.push_back(blindPoints[blindPoint][3]);
 
     pvaTargetPointMsg.velocities.push_back(blindPoints[blindPoint][4]);
@@ -44,7 +69,7 @@ void setBlindPva(int blindPoint){
     pvaTargetPointMsg.accelerations.push_back(blindPoints[blindPoint][8]);
     pvaTargetPointMsg.accelerations.push_back(blindPoints[blindPoint][9]);
 
-    pvaTargetPointMsg.effort.push_back(-2);
+    pvaTargetPointMsg.effort.push_back(10);
 }
 
 /**
@@ -52,10 +77,16 @@ void setBlindPva(int blindPoint){
  */
 bool isArrivedBlind(int blindPoint){
     if(abs(dronePoseLp.pose.position.x-(blindPoints[blindPoint][0]-drift.x())) < 0.1 &&
-       abs(dronePoseLp.pose.position.y-(blindPoints[blindPoint][1]+drift.y()) < 0.1 &&
+       abs(dronePoseLp.pose.position.y-(blindPoints[blindPoint][1]-drift.y()) < 0.1 &&
        abs(planeCurrHeight-(blindPoints[blindPoint][2]+drift.z())) < 0.1))
+    {
         return true;
+    }
     else
+    {
         return false;
+
+    }
+
 }
 

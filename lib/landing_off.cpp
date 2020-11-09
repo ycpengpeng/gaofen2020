@@ -16,7 +16,7 @@ double landOffPoints[2][10] =
 
 bool land_off(int landOffStep)
 {
-    switch(landOffStep)
+/*    switch(landOffStep)
     {
         case 0:
             setLandPva(landOffStep);
@@ -25,23 +25,16 @@ bool land_off(int landOffStep)
                 landOffStep++;
             break;
 
-        case 1:
-            setLandPva(landOffStep);
-            pubPvaTargetPoint.publish(pvaTargetPointMsg);
-            if (isArrivedLand(landOffStep))
-            {
-                landOffStep++;
-                return true;
-            }
-            break;
-
-    }
+    }*/
+    ROS_INFO_ONCE("START LAND---");
+    setLandPva(landOffStep);
+    pubPvaTargetPoint.publish(pvaTargetPointMsg);
+    return false;
 
 }
 
-/**
- * check if drone has arrived the blind target point
- */
+//check if drone has arrived the blind target point
+
 bool isArrivedLand(int landPoint){
     if(abs(dronePoseLp.pose.position.x-landOffPoints[landPoint][0]+drift.x())<0.1 &&
        abs(dronePoseLp.pose.position.y-landOffPoints[landPoint][1]+drift.y())<0.1 &&
@@ -73,6 +66,6 @@ void setLandPva(int landOffStep){
     pvaTargetPointMsg.accelerations.push_back(landOffPoints[landOffStep][8]);
     pvaTargetPointMsg.accelerations.push_back(landOffPoints[landOffStep][9]);
 
-    pvaTargetPointMsg.effort.push_back(landOffStep);
+    pvaTargetPointMsg.effort.push_back(-2);
 }
 

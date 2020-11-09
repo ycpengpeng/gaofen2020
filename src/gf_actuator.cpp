@@ -59,12 +59,16 @@ void positionCallback(const nav_msgs::Odometry::ConstPtr &msg)
 
     static ros::Time position_cb_time=ros::Time::now();
     position_cb_time=ros::Time::now();
-    current_p << msg->pose.pose.position.x, msg->pose.pose.position.y, msg->pose.pose.position.z;
+
 
 }
 
 void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
+
+    ///TODO 以下部分仅仅用于测试
+    current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
+
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
     current_att.y() = msg->pose.orientation.y;
@@ -102,12 +106,13 @@ void pva_land();
 void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPtr& msg)
 {
     //ros::Time tmp=ros::Time::now();
+
     planned_p << msg->positions[0], msg->positions[1], msg->positions[2];
     if(last_planned_p(0)==planned_p(0)&&last_planned_p(1)==planned_p(1)&&last_planned_p(2)==planned_p(2))
     {
         return;
     }
-    double numberloop=msg->effort[0];
+    int numberloop=msg->effort[0];
 
     if(numberloop==-1)//Take Off!!!!!!!!!!
     {
@@ -115,19 +120,36 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
         last_planned_p=planned_p;
         I=0;
     }
-    else if(numberloop==-2)
+    else if(numberloop==-2)//Land!!!!
     {
         pva_land();
         last_planned_p=planned_p;
         I=0;
     }
+
+    else if(numberloop==-3)//hover!!!!
+    {
+        Vector3d hover_position=current_p;
+        Vector3d p_sp(hover_position(0), hover_position(1), hover_position(2));
+        Vector3d v_sp(0, 0, 0);
+        Vector3d a_sp(0, 0, 0);
+        t_number=1;
+        p_t.row(0)=p_sp;
+        v_t.row(0)=v_sp;
+        a_t.row(0)=a_sp;
+        yaw_t(0)=current_euler.z();
+        last_planned_p=planned_p;
+        I=0;
+    }
+
     else if(numberloop>=0)//zuan_quan!!!!!!!!!!!!!!!!!!!!
     {
-        //ROS_INFO("planned_p(0)  %f  planned_p(1)  %f  planned_p(2)   %f",planned_p(0),planned_p(1),planned_p(2));
+        //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
+        ROS_INFO("gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
-        //ROS_INFO("planned_a %f %f %f",planned_a(0),planned_a(1),planned_a(2));
+
         static bool init=1;
         if(init==0)
         {
@@ -169,7 +191,7 @@ void pva_takeoff(double take_off_height)
     a_t = Eigen::MatrixXd::Zero(t_number, 3);
     yaw_t = Eigen::VectorXd::Zero(t_number);
 
-    for(int times=0;times<t_number;times++)
+    for(times=0;times<t_number;times++)
     {
         if(times < take_off_send_times / 2.0)
         {
@@ -196,13 +218,14 @@ void pva_takeoff(double take_off_height)
             p_t.row(times)=p_sp;
             v_t.row(times)=v_sp;
             a_t.row(times)=a_sp;
-            yaw_t(times)=take_off_yaw;
+            yaw_t(times)=0;
         }
         else
         {
-            p_t.row(times)=p_t.row(take_off_send_times-1);
-            v_t.row(times)=v_t.row(take_off_send_times-1);
-            a_t.row(times)=a_t.row(take_off_send_times-1);
+            Vector3d tmp(take_off_position(0),take_off_position(1),take_off_height);
+            p_t.row(times)=tmp;
+            v_t.row(times)=Vector3d::Zero();
+            a_t.row(times)=Vector3d::Zero();
             yaw_t(times)=0;
         }
     }
@@ -210,40 +233,42 @@ void pva_takeoff(double take_off_height)
 void pva_land()
 {
 
-    Vector3d take_off_position=current_p;
+    Vector3d land_position=current_p;
 
-    double take_off_acc = 0.1;
-    double take_off_time=sqrt(take_off_position(2)/take_off_acc)*2.0;
-    double take_off_send_times = take_off_time / delta_t;
+    double land_acc = 0.1;
+    double land_time=sqrt(land_position(2)/land_acc)*2.0;
+    double land_send_times = land_time / delta_t;
     double times=0;
-    t_number=take_off_send_times+100;
+    t_number=land_send_times+100;
+
 //    take_off_init=0;
+
     ros::Time last_time=ros::Time::now();
 
     p_t = Eigen::MatrixXd::Zero(t_number, 3);
     v_t = Eigen::MatrixXd::Zero(t_number, 3);
     a_t = Eigen::MatrixXd::Zero(t_number, 3);
 
-    for(int times=0;times<t_number;times++)
+    for(times=0;times<t_number;times++)
     {
-        if(times < take_off_send_times / 2.0)
+        if(times < land_send_times / 2.0)
         {
-            double z_sp = take_off_position(2)-0.5*take_off_acc*times*delta_t*times*delta_t;
-            double vz_sp = -times*delta_t*take_off_acc;
-            Vector3d p_sp(take_off_position(0), take_off_position(1), z_sp);
+            double z_sp = land_position(2)-0.5*land_acc*times*delta_t*times*delta_t;
+            double vz_sp = -times*delta_t*land_acc;
+            Vector3d p_sp(land_position(0), land_position(1), z_sp);
             Vector3d v_sp(0, 0, vz_sp);
             Vector3d a_sp(0, 0, 0);
             p_t.row(times)=p_sp;
             v_t.row(times)=v_sp;
             a_t.row(times)=a_sp;
         }
-        else if(times < take_off_send_times)
+        else if(times < land_send_times)
         {
-            double t_this = (times-take_off_send_times/2.0)*delta_t;
-            double vz_sp = -(take_off_send_times/2.0*delta_t*take_off_acc - take_off_acc*t_this);
-            double  z_sp = take_off_position(2)-(1.0/2.0*take_off_acc*(take_off_time/2.0)*(take_off_time/2.0)+(-vz_sp+take_off_time/2.0*take_off_acc)*t_this/2.0);
+            double t_this = (times-land_send_times/2.0)*delta_t;
+            double vz_sp = -(land_send_times/2.0*delta_t*land_acc - land_acc*t_this);
+            double  z_sp = land_position(2)-(1.0/2.0*land_acc*(land_time/2.0)*(land_time/2.0)+(-vz_sp+land_time/2.0*land_acc)*t_this/2.0);
             //ROS_INFO("Z_SP:%f",z_sp);
-            Vector3d p_sp(take_off_position(0), take_off_position(1), z_sp);
+            Vector3d p_sp(land_position(0), land_position(1), z_sp);
             Vector3d v_sp(0, 0, vz_sp);
             Vector3d a_sp(0, 0, -0);
             p_t.row(times)=p_sp;
@@ -252,12 +277,14 @@ void pva_land()
         }
         else
         {
-            p_t.row(times)<<take_off_position(0),take_off_position(1),-100;
-            v_t.row(times)=v_t.row(take_off_send_times-1);
-            a_t.row(times)=a_t.row(take_off_send_times-1);;
+           // ROS_INFO("LAND OVER---------------------------");
+            p_t.row(times)<<land_position(0),land_position(1),-100;
+            v_t.row(times)=Vector3d::Zero();
+            a_t.row(times)=Vector3d::Zero();
         }
     }
 }
+
 void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d pf,Vector3d vf,Vector3d af,unsigned int &t_num,
                                   double yawf)
 {
@@ -267,6 +294,20 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
     delt_x=pf(0)-p0(0);
     delt_y=pf(1)-p0(1);
     delt_z=pf(2)-p0(2);
+
+    if(fabs(delt_x)>5)
+    {
+        delt_x = 5.0 * delt_x / fabs(delt_x);
+    }
+    if(fabs(delt_y)>5)
+    {
+        delt_y = 5.0 * delt_y / fabs(delt_y);
+    }
+    if(fabs(delt_z)>5)
+    {
+        delt_z = 5.0 * delt_z / fabs(delt_z);
+    }
+
     T1 = table->query_pva_table(delt_x, v0(0), vf(0), a0(0));
     T2 = table->query_pva_table(delt_y, v0(1), vf(1), a0(1));
     T3 = table->query_pva_table(delt_z, v0(2), vf(2), a0(2));
@@ -276,6 +317,10 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
     if(T==-1)
     {
         ROS_INFO("T=-1////////////////");
+/*        delt_x=pf(0)-p0(0);
+        delt_y=pf(1)-p0(1);
+        delt_z=pf(2)-p0(2);*/
+
     }
 
     //ROS_INFO("T:%f",T);
@@ -371,12 +416,17 @@ int main(int argc, char** argv)
 {
     ros::init(argc, argv, "gf_actuator");
     ros::NodeHandle nh;
-    table->csv2pva_table("/home/pengpeng/Desktop/p3_v1-5_a3_res0-1.csv");
+    table->csv2pva_table("/home/pengpeng/Desktop/p5_v0.5_a2_res0-1.csv");
 
     ros::Rate loop_rate(LOOPRATE);
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/mavros/state", 1, stateCallback);
-    ros::Subscriber pose_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample", 1, positionCallback);
+
+    //ros::Subscriber pose_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample", 1, positionCallback);
+
+    ///TODO:以下代码仅仅用于仿真
+
+
     ros::Subscriber att_sub = nh.subscribe<geometry_msgs::PoseStamped>("/mavros/local_position/pose", 1, attCallback);
 
     pva_pub = nh.advertise<trajectory_msgs::JointTrajectoryPoint>("/pva_setpoint", 1);
@@ -398,8 +448,8 @@ int main(int argc, char** argv)
         ros::spinOnce();
         for(I=0;I<t_number;I++)
         {
+            //ROS_INFO("DDDDD");
             setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
-            hover_position=current_p;
             ros::spinOnce();
             loop_rate.sleep();
         }
@@ -409,12 +459,16 @@ int main(int argc, char** argv)
             Vector3d v_sp(0, 0, 0);
             setPVA(p_sp, v_sp, Vector3d::Zero(), yaw_set);
         }*/
+//ROS_INFO("0------------I:%d  t_number:%d",I,t_number);
         while(t_number!=0&&I!=0&&I==t_number)
         {
+            //ROS_INFO("AAAASSSDADADAD");
             setPVA(p_t.row(t_number-1), Vector3d::Zero(), Vector3d::Zero(), yaw_t(t_number-1));//a_t.row(last_index));
             ros::spinOnce();
             loop_rate.sleep();
         }
+        //ROS_INFO("I:%d  t_number:%d",I,t_number);
+
 
     }
     return 0;

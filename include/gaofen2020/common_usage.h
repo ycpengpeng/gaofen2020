@@ -22,6 +22,7 @@
 #include <Eigen/Core>
 #include <chrono>
 using namespace std;
+using namespace Eigen;
 
 #define PI 3.141593
 
