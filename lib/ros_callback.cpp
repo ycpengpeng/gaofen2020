@@ -54,16 +54,16 @@ void stateModeCb(const mavros_msgs::State::ConstPtr& msg){
 
 
 void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
-    if(visionPose.pose.orientation.w==-1000)
+/*    if(visionPose.pose.orientation.w==-1000)
     {
         visionPose.pose.position.x=0;
         visionPose.pose.position.y=0;
         visionPose.pose.position.z=0;
     }
     else
-    {
+    {*/
         visionPose = *msg;
-    }
+   // }
 }
 
 
