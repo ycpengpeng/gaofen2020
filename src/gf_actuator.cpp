@@ -60,12 +60,21 @@ void positionCallback(const nav_msgs::Odometry::ConstPtr &msg)
 
 
 }
+///TODO 以下部分仅仅用于wzy feiji
+void odom_cb(const nav_msgs::Odometry::ConstPtr &msg)
+{
+    double theta=30.0/180.0*3.1415926;
+    current_p(0)= -msg->pose.pose.position.x*cos(theta)-msg->pose.pose.position.y*sin(theta);
+    current_p(1)=  -msg->pose.pose.position.x*sin(theta)+msg->pose.pose.position.y*cos(theta);
+    current_p(2)=-msg->pose.pose.position.z;
+
+}
 
 void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
 
-    ///TODO 以下部分仅仅用于测试
-    current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
+    ///TODO 以下部分仅仅用于wzy feiji
+    //current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
 
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
@@ -144,6 +153,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
     {
         //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
         ROS_INFO("gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+        ROS_INFO("gf_actuator:current_p %f %f %f",current_p(0),current_p(1),current_p(2));
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
@@ -439,6 +449,9 @@ int main(int argc, char** argv)
     ros::Publisher velocity_pub=nh.advertise<geometry_msgs::Twist>("mavros/setpoint_velocity/cmd_vel_unstamped", 1);
     odom_sp_enu_pub = nh.advertise<nav_msgs::Odometry>("/odom_sp_enu", 1);
     path_pub=nh.advertise<nav_msgs::Odometry>("/path", 1);
+
+    ros::Subscriber odom_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample",1,odom_cb);
+
     Vector3d hover_position;
 
     while(ros::ok())
