@@ -14,11 +14,11 @@ void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 void stateModeCb(const mavros_msgs::State::ConstPtr& msg);
 void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 void setBeforeOffbPva();
-ros::NodeHandle nh;
+
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "decisionV1");
-
+    ros::NodeHandle nh;
     ros::Rate rate(40);
 
     ros_callback_func();
