@@ -24,9 +24,9 @@ void setBeforeOffbPva()
     pvaTargetPointMsg.accelerations.clear();
     pvaTargetPointMsg.effort.clear();
 
-    pvaTargetPointMsg.positions.push_back(0);
-    pvaTargetPointMsg.positions.push_back(0);
-    pvaTargetPointMsg.positions.push_back(0.1);
+    pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.x);
+    pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.y);
+    pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.z);
     pvaTargetPointMsg.positions.push_back(0);
 
     pvaTargetPointMsg.velocities.push_back(0);
