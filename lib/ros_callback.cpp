@@ -70,10 +70,12 @@ void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg){
     dronePoseT265 = *msg;
 
-    dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.x;
-    dronePoseCurrent.pose.position.y = dronePoseT265.pose.pose.position.y;
+    double theta=30.0/180.0*3.1415926;
+    dronePoseCurrent.pose.position.x= -dronePoseT265.pose.pose.position.x*cos(theta)-dronePoseT265.pose.pose.position.y*sin(theta);
+    dronePoseCurrent.pose.position.y =  -dronePoseT265.pose.pose.position.x*sin(theta)+dronePoseT265.pose.pose.position.y*cos(theta);
 
-
+    dronePoseCurrent.pose.position.z=-dronePoseT265.pose.pose.position.z;
+    planeCurrHeight=dronePoseLp.pose.position.z;
 }
 
 
@@ -108,8 +110,10 @@ void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     dronePoseLp = *msg;
+
+
     ///TODO: Only fo Simulation!!!!!!!
-    planeCurrHeight=dronePoseLp.pose.position.z;
+/*    planeCurrHeight=dronePoseLp.pose.position.z;
     dronePoseCurrent.pose.position.x=dronePoseLp.pose.position.x;
-    dronePoseCurrent.pose.position.y=dronePoseLp.pose.position.y;
+    dronePoseCurrent.pose.position.y=dronePoseLp.pose.position.y;*/
 }
