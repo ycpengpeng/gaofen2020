@@ -58,15 +58,15 @@ void positionCallback(const nav_msgs::Odometry::ConstPtr &msg)
     static ros::Time position_cb_time=ros::Time::now();
     position_cb_time=ros::Time::now();
 
-
+    //current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
 }
 
 void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
 
-    ///TODO 以下部分仅仅用于测试
+    ///TODO 以下部分仅仅用于simulation
     current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
-
+    ROS_INFO_THROTTLE(10,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
     current_att.y() = msg->pose.orientation.y;
@@ -420,7 +420,7 @@ int main(int argc, char** argv)
 
     ros::Subscriber state_sub = nh.subscribe<mavros_msgs::State>("/mavros/state", 1, stateCallback);
 
-    //ros::Subscriber pose_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample", 1, positionCallback);
+    ros::Subscriber pose_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample", 1, positionCallback);
 
     ///TODO:以下代码仅仅用于仿真
 
