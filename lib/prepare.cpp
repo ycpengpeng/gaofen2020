@@ -106,7 +106,7 @@ bool take_off_func()
         ROS_WARN("Ready to climb to home hover height");
         ROS_WARN("Height now is %f", planeCurrHeight);
         ROS_WARN("Required height is %f", homeHoverHeight);*/
-        if(abs(planeCurrHeight-homeHoverHeight) < 0.05){
+        if(abs(planeCurrHeight-homeHoverHeight) < 0.1){
             return true;
         }
     }

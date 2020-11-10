@@ -20,12 +20,12 @@ ros::Publisher pubDroneCurrentPose;
 
 
 void ros_callback_func(){
-    ros::NodeHandle nh;
+
 
     /**
      * topic subscriber
      */
-    subStateVision = nh.subscribe<geometry_msgs::PoseStamped>("/topicStateVision",1,stateVisionCb);
+    subStateVision = nh.subscribe<geometry_msgs::PoseStamped>("/drone_pose_vision",1,stateVisionCb);
     subStateT265 = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample",1,stateT265Cb);
     subStateHeight = nh.subscribe<mavros_msgs::Altitude>("/mavros/altitude",1,stateHeightCb);
     subStatePose = nh.subscribe<geometry_msgs::PoseStamped>("/mavros/local_position/pose",1,statePoseCb);
@@ -47,9 +47,7 @@ void ros_callback_func(){
 
 void stateModeCb(const mavros_msgs::State::ConstPtr& msg){
     currentStateMsg = *msg;
-    //ROS_INFO("AAAAAAASSSSSDADAD");
-    //ROS_ERROR("current_state_msg.armed: ");
-    //cout << "#######################current_state_msg.armed" << to_string(currentStateMsg.armed) << endl;
+
 }
 
 
@@ -69,7 +67,6 @@ void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 
 void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg){
     dronePoseT265 = *msg;
-
     dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.x;
     dronePoseCurrent.pose.position.y = dronePoseT265.pose.pose.position.y;
 
@@ -88,7 +85,7 @@ void stateHeightCb(const mavros_msgs::Altitude::ConstPtr &msg){
 
     relativeHeight.x()=-0.05;
     relativeHeight.y()=0.05;
-    relativeHeight.z()=-(*msg).local - 0.1;
+    relativeHeight.z()=-(*msg).local;
     relativeHeight.w()=0;
 
     realHeight=currentAttitude.inverse() * relativeHeight * currentAttitude;

@@ -33,6 +33,7 @@ extern geometry_msgs::PoseStamped dronePoseCurrent;
 extern nav_msgs::Odometry dronePoseT265;
 extern geometry_msgs::PoseStamped droneDownCameraPose;
 extern geometry_msgs::PoseStamped visionPose;
+extern ros::NodeHandle nh;
 
 /**
  * program process

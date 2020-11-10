@@ -64,7 +64,7 @@ void positionCallback(const nav_msgs::Odometry::ConstPtr &msg)
 void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 {
 
-    ///TODO 以下部分仅仅用于simulation
+    ///TODO
     current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
     ROS_INFO_THROTTLE(10,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
     current_att.w() = msg->pose.orientation.w;
@@ -143,7 +143,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
     else if(numberloop>=0)//zuan_quan!!!!!!!!!!!!!!!!!!!!
     {
         //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
-        ROS_INFO("gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+        ROS_ERROR_THROTTLE(0.5,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
@@ -422,7 +422,7 @@ int main(int argc, char** argv)
 
     ros::Subscriber pose_sub = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample", 1, positionCallback);
 
-    ///TODO:以下代码仅仅用于仿真
+    ///TODO:
 
 
     ros::Subscriber att_sub = nh.subscribe<geometry_msgs::PoseStamped>("/mavros/local_position/pose", 1, attCallback);

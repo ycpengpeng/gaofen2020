@@ -269,16 +269,19 @@ void update_drift(int numberLoop)
 {
     ///drift = given - visionPose
 
-    if(visionPose.pose.orientation.w=-1000)
+    if(visionPose.pose.orientation.w==-1000)
     {
         drift.x()=0;
         drift.y()=0;
         drift.z()=0;
     }
+    else
+    {
+        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;//
+        drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
+        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
+    }
 
-    drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;//
-    drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
-    drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
 
 
 /*    drift.x() =  0;
