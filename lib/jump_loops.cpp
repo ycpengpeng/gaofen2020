@@ -51,15 +51,10 @@ double blindPoints[4][10] =
                 {13.5+1 ,2, 3.8   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
                 {16.5 , -2.8, 3.8 , 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
                 {22 , 0,loop_height[5] , 0, 0, 0, 0, 0, 0, 0},  //dot_15
-
         };
-
-
-
 
 bool go_to_loop(int numberLoop)
 {
-
     if(numberLoop==0)
     {
         ROS_INFO_ONCE("----start loop %d",numberLoop);
@@ -88,7 +83,6 @@ bool go_to_loop(int numberLoop)
     {
         ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
-
     if(loopStep==0)
     {
         update_drift(numberLoop);
@@ -104,7 +98,6 @@ bool go_to_loop(int numberLoop)
             loopStep=1;
         }
         return false;
-
     }
 
     if(loopStep==1)
@@ -122,7 +115,6 @@ bool go_to_loop(int numberLoop)
             return true;
         }
         return false;
-
     }
 
    /* switch(loopStep)
@@ -169,10 +161,7 @@ bool go_to_loop(int numberLoop)
             return true;
         default:
             return false;
-
     }*/
-
-
 }
 
 /**
@@ -267,11 +256,19 @@ bool isArrivedCenter(int numberLoop){
  */
 void update_drift(int numberLoop)
 {
-    ///drift = given - visionPose
+    if(visionPose.pose.orientation.w==-1000)
+    {
+        drift.x()=0;
+        drift.y()=0;
+        drift.z()=0;
+    }
+    else
+    {
+        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;//
+        drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
+        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
+    }
 
-    drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;//
-    drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
-    drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
 
 
 /*    drift.x() =  0;
