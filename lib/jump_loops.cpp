@@ -6,13 +6,14 @@
 
 
 int loopStep = 0;
-double frontLoopDistance = 1.5;
+double frontLoopDistance = 1.1;
 double behindLoopDistance = 0.5;
 double height = 1.0;
 double velocityX = 0;
 
 trajectory_msgs::JointTrajectoryPoint pvaTargetPointMsg;
-
+void setBoardPva(int numberLoop);
+bool isArrivedBoard(int numberLoop);
 
 /*Vector6d
 Eigen::Matrix<float,6,1> loop_height;
@@ -32,9 +33,7 @@ double frontPoints[6][10] =
                 {9.5 - frontLoopDistance, 2.5 , loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
                 {13.5- frontLoopDistance, 2   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
                 {18-frontLoopDistance , -2.8,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
-
         };
-
 double centerPoints[7][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
@@ -55,66 +54,69 @@ double blindPoints[4][10] =
 
         };
 
-
-
-
 bool go_to_loop(int numberLoop)
 {
-
     if(numberLoop==0)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==1)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==2)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==3)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==4)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==5)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
     if(numberLoop==6)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start card %d",numberLoop);
     }
 
-    if(loopStep==0)
+    if(loopStep==0)  //飞到号码牌前面
+    {
+
+        ///TODO ONLY IN SIMULATION
+        update_drift(numberLoop);
+        setBoardPva(numberLoop);
+        pubPvaTargetPoint.publish(pvaTargetPointMsg);
+        if(isArrivedBoard(numberLoop))
+        {
+            update_drift(numberLoop);
+            ROS_INFO("go to loop %d front center",numberLoop);
+            loopStep=1;
+        }
+        return false;
+    }
+    if(loopStep==1) //飞到圆心正前方
     {
         update_drift(numberLoop);
         ///TODO ONLY IN SIMULATION
-        drift.x() =  0;
-        drift.y() = 0;
-        drift.z() = 0;
         setFrontPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedFront(numberLoop))
         {
-            ROS_INFO("go to loop %d center",numberLoop);
-            loopStep=1;
+            ROS_INFO("go to loop %d back",numberLoop);
+            loopStep=2;
         }
         return false;
-
     }
-
-    if(loopStep==1)
+    if(loopStep==2)  //飞到圆心后面
     {
         update_drift(numberLoop);
         ///TODO ONLY IN SIMULATION
-        drift.x() =  0;
-        drift.y() = 0;
-        drift.z() = 0;
         setCenterPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedCenter(numberLoop))
@@ -173,9 +175,32 @@ bool go_to_loop(int numberLoop)
     }*/
 }
 
-/**
- * set frontPoint value in front of loop
- */
+void setBoardPva(int numberLoop)  //飞到牌子前面
+{
+    pvaTargetPointMsg.positions.clear();
+    pvaTargetPointMsg.velocities.clear();
+    pvaTargetPointMsg.accelerations.clear();
+    pvaTargetPointMsg.effort.clear();
+
+    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][0]-drift.x());
+    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][1]-drift.y());
+    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][2]-loop_radius[numberLoop]-0.225-drift.z());
+    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][3]);
+
+    pvaTargetPointMsg.velocities.push_back(frontPoints[numberLoop][4]);
+    pvaTargetPointMsg.velocities.push_back(frontPoints[numberLoop][5]);
+    pvaTargetPointMsg.velocities.push_back(frontPoints[numberLoop][6]);
+
+    pvaTargetPointMsg.accelerations.push_back(frontPoints[numberLoop][7]);
+    pvaTargetPointMsg.accelerations.push_back(frontPoints[numberLoop][8]);
+    pvaTargetPointMsg.accelerations.push_back(frontPoints[numberLoop][9]);
+
+    pvaTargetPointMsg.effort.push_back(numberLoop);
+
+}
+
+
+
 void setFrontPva(int numberLoop){
     pvaTargetPointMsg.positions.clear();
     pvaTargetPointMsg.velocities.clear();
@@ -198,9 +223,7 @@ void setFrontPva(int numberLoop){
     pvaTargetPointMsg.effort.push_back(numberLoop);
 }
 
-/**
- * set centerPoint value of loop
- */
+
 void setCenterPva(int numberLoop){
     pvaTargetPointMsg.positions.clear();
     pvaTargetPointMsg.velocities.clear();
@@ -226,23 +249,35 @@ void setCenterPva(int numberLoop){
 
 }
 
+bool isArrivedBoard(int numberLoop)
+{
+    if(abs(dronePoseCurrent.pose.position.x-pvaTargetPointMsg.positions[0])<0.1 &&
+       abs(dronePoseCurrent.pose.position.y-pvaTargetPointMsg.positions[1])<0.1 &&
+       abs(planeCurrHeight-pvaTargetPointMsg.positions[2])<0.1)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
-/**
- * check if drone has arrived the front target point
- */
+
+
 bool isArrivedFront(int numberLoop){
     if(abs(dronePoseCurrent.pose.position.x-(frontPoints[numberLoop][0]-drift.x()))<0.1 &&
        abs(dronePoseCurrent.pose.position.y-(frontPoints[numberLoop][1]-drift.y()))<0.1 &&
        abs(planeCurrHeight-(frontPoints[numberLoop][2]-drift.z()))<0.1)
+    {
         return true;
+    }
     else
+    {
         return false;
+    }
 }
 
-
-/**
- * check if drone has arrived the center target point
- */
 bool isArrivedCenter(int numberLoop){
     if(abs(dronePoseCurrent.pose.position.x-(centerPoints[numberLoop][0]-drift.x()))<0.1 &&
        abs(dronePoseCurrent.pose.position.y-(centerPoints[numberLoop][1]-drift.y()))<0.1 &&
@@ -266,22 +301,20 @@ bool isArrivedCenter(int numberLoop){
 void update_drift(int numberLoop)
 {
     ///drift = given - visionPose
-    if(visionPose.pose.orientation.w==-1000)
+    if(visionPose.pose.orientation.w!=1000&&visionPose.pose.orientation.x==numberLoop+1)
     {
-        drift.x()=0;
-        drift.y()=0;
-        drift.z()=0;
-    }
-    else
-    {
-        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;
+/*        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;
         drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
-        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;
+        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;*/
 
+        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x;
+        drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y;
+        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z;
     }
-    drift.x() =  0;
-    drift.y() = 0;
-    drift.z() = 0;
+    drift.x()=0;
+    drift.y()=0;
+    drift.z()=0;
+
     //ROS_INFO("visionPose.pose.position.x:%f",visionPose.pose.position.x);
 
 /*    drift.x() =  frontLoopDistance - visionPose.pose.position.x;//
