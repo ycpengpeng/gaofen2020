@@ -36,6 +36,7 @@ mavros_msgs::AttitudeTarget att_setpoint;
 ros::Publisher att_ctrl_pub;
 ros::Publisher odom_sp_enu_pub;
 ros::Publisher path_pub;
+geometry_msgs::PoseStamped pose;
 
 unsigned int t_number=0;     //离散点的数量
 
@@ -449,7 +450,19 @@ int main(int argc, char** argv)
         for(I=0;I<t_number;I++)
         {
             //ROS_INFO("DDDDD");
-            setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
+            //setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
+
+
+            pose.pose.position.x = p_t(I,0);
+            pose.pose.position.y = p_t(I,1);
+            pose.pose.position.z = p_t(I,2);
+
+            pose.pose.orientation.w=cos(yaw_t(I)/2);
+            pose.pose.orientation.x=0;
+            pose.pose.orientation.y=0;
+            pose.pose.orientation.z=sin(yaw_t(I)/2);
+            local_pos_pub.publish(pose);
+
             ros::spinOnce();
             loop_rate.sleep();
         }
@@ -463,7 +476,8 @@ int main(int argc, char** argv)
         while(t_number!=0&&I!=0&&I==t_number)
         {
             //ROS_INFO("AAAASSSDADADAD");
-            setPVA(p_t.row(t_number-1), Vector3d::Zero(), Vector3d::Zero(), yaw_t(t_number-1));//a_t.row(last_index));
+            //setPVA(p_t.row(t_number-1), Vector3d::Zero(), Vector3d::Zero(), yaw_t(t_number-1));//a_t.row(last_index));
+            local_pos_pub.publish(pose);
             ros::spinOnce();
             loop_rate.sleep();
         }
