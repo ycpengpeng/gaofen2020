@@ -62,31 +62,31 @@ bool go_to_loop(int numberLoop)
 
     if(numberLoop==0)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==1)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==2)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==3)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==4)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==5)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==6)
     {
-        ROS_INFO_ONCE("----start loop %d",numberLoop);
+        ROS_ERROR_ONCE("----start loop %d",numberLoop);
     }
 
     if(loopStep==0)
@@ -100,7 +100,7 @@ bool go_to_loop(int numberLoop)
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedFront(numberLoop))
         {
-            ROS_INFO("go to loop %d center",numberLoop);
+            ROS_ERROR("go to loop %d center",numberLoop);
             loopStep=1;
         }
         return false;
@@ -269,13 +269,7 @@ void update_drift(int numberLoop)
 {
     ///drift = given - visionPose
 
-    if(visionPose.pose.orientation.w==-1000)
-    {
-        drift.x()=0;
-        drift.y()=0;
-        drift.z()=0;
-    }
-    else
+    if(visionPose.pose.orientation.w!=-1000&&visionPose.pose.orientation.x==numberLoop+1)   //detect the numloop and it is right
     {
         drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;//
         drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
@@ -284,6 +278,11 @@ void update_drift(int numberLoop)
 
 
 
+
+
+
+    // ROS_INFO("visionpose.x %f               drone.pose.x   %f",visionPose.pose.position.x,dronePoseCurrent.pose.position.x);
+    // ROS_INFO_THROTTLE(0.5,"drift: %f    %f    %f",drift.x(),drift.y(),drift.z());
 /*    drift.x() =  0;
     drift.y() = 0;
     drift.z() = 0;*/

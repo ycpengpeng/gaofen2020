@@ -21,7 +21,7 @@ ros::Publisher pubDroneCurrentPose;
 
 void ros_callback_func(){
 
-
+    ros::NodeHandle nh;
     /**
      * topic subscriber
      */
@@ -60,15 +60,15 @@ void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
     }*/
 /*    else
     {*/
-        visionPose = *msg;
+    visionPose = *msg;
     //}
 }
 
 
 void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg){
     dronePoseT265 = *msg;
-    dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.x;
-    dronePoseCurrent.pose.position.y = dronePoseT265.pose.pose.position.y;
+    dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.y;
+    dronePoseCurrent.pose.position.y =- dronePoseT265.pose.pose.position.x;
 
 
 }

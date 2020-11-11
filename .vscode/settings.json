@@ -4,6 +4,7 @@
         "/opt/ros/kinetic/lib/python2.7/dist-packages"
     ],
     "files.associations": {
-        "core": "cpp"
+        "core": "cpp",
+        "unordered_map": "cpp"
     }
 }

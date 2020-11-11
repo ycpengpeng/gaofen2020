@@ -78,7 +78,7 @@ void setBlindPva(int blindPoint){
 bool isArrivedBlind(int blindPoint){
     if(abs(dronePoseLp.pose.position.x-(blindPoints[blindPoint][0]-drift.x())) < 0.1 &&
        abs(dronePoseLp.pose.position.y-(blindPoints[blindPoint][1]-drift.y()) < 0.1 &&
-       abs(planeCurrHeight-(blindPoints[blindPoint][2]+drift.z())) < 0.1))
+       abs(planeCurrHeight-(blindPoints[blindPoint][2]-drift.z())) < 0.1))
     {
         return true;
     }
