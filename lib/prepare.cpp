@@ -144,7 +144,6 @@ bool take_off_func()
  */
 bool hover_and_adjust_func()
 {
-
     hoverFunCount--;
     ROS_INFO_ONCE("HOVER MODE!!!!!");
 /*    if(hoverFunCount)

@@ -25,7 +25,7 @@ void ros_callback_func(){
     /**
      * topic subscriber
      */
-    subStateVision = nh.subscribe<geometry_msgs::PoseStamped>("/drone_pose_vision",1,stateVisionCb);
+    subStateVision = nh.subscribe<geometry_msgs::PoseStamped>("/drone_pos_vision",1,stateVisionCb);
     subStateT265 = nh.subscribe<nav_msgs::Odometry>("/camera/odom/sample",1,stateT265Cb);
     subStateHeight = nh.subscribe<mavros_msgs::Altitude>("/mavros/altitude",1,stateHeightCb);
     subStatePose = nh.subscribe<geometry_msgs::PoseStamped>("/mavros/local_position/pose",1,statePoseCb);

@@ -38,7 +38,7 @@ bool land_off(int landOffStep)
 bool isArrivedLand(int landPoint){
     if(abs(dronePoseLp.pose.position.x-landOffPoints[landPoint][0]-drift.x())<0.1 &&
        abs(dronePoseLp.pose.position.y-landOffPoints[landPoint][1]-drift.y())<0.1 &&
-       abs(planeCurrHeight-landOffPoints[landPoint][2]+drift.z())<0.1)
+       abs(planeCurrHeight-landOffPoints[landPoint][2]-drift.z())<0.1)
         return true;
     else
         return false;
