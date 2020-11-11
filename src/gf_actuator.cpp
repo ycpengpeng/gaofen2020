@@ -38,6 +38,7 @@ mavros_msgs::AttitudeTarget att_setpoint;
 ros::Publisher att_ctrl_pub;
 ros::Publisher odom_sp_enu_pub;
 ros::Publisher path_pub;
+geometry_msgs::PoseStamped pose;
 
 unsigned int t_number=0;     //离散点的数量
 
@@ -103,6 +104,10 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
 void pva_takeoff(double take_off_height);
 void pva_land();
 
+void setpoint_takeoff(double take_off_height);
+void setpoint_land();
+
+
 void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPtr& msg)
 {
     //ros::Time tmp=ros::Time::now();
@@ -116,13 +121,15 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
 
     if(numberloop==-1)//Take Off!!!!!!!!!!
     {
-        pva_takeoff(planned_p(2));
+        //pva_takeoff(planned_p(2));
+        setpoint_takeoff(planned_p(2));
         last_planned_p=planned_p;
         I=0;
     }
     else if(numberloop==-2)//Land!!!!
     {
-        pva_land();
+        //pva_land();
+        setpoint_land();
         last_planned_p=planned_p;
         I=0;
     }
@@ -173,6 +180,66 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
         //ROS_INFO("duration:   %f",ros::Time::now().toSec()-tmp.toSec());
     }
 }
+
+void setpoint_takeoff(double take_off_height)
+{
+    Vector3d take_off_position=current_p;
+    double take_off_yaw=current_euler.z();
+    double take_off_acc = 0.1;
+    double take_off_time=sqrt(take_off_height/take_off_acc)*2.0;
+    double take_off_send_times = take_off_time / delta_t;
+    double times=0;
+    t_number=take_off_send_times+100;
+//    take_off_init=0;
+    ros::Time last_time=ros::Time::now();
+
+    p_t = Eigen::MatrixXd::Zero(t_number, 3);
+    v_t = Eigen::MatrixXd::Zero(t_number, 3);
+    a_t = Eigen::MatrixXd::Zero(t_number, 3);
+    yaw_t = Eigen::VectorXd::Zero(t_number);
+
+    for(times=0;times<t_number;times++)
+    {
+        if(times < take_off_send_times / 2.0)
+        {
+            double z_sp = 0.5*take_off_acc*times*delta_t*times*delta_t;
+            double vz_sp = times*delta_t*take_off_acc;
+            Vector3d p_sp(take_off_position(0), take_off_position(1), z_sp);
+            Vector3d v_sp(0, 0, vz_sp);
+            Vector3d a_sp(0, 0, 0);
+            p_t.row(times)=p_sp;
+            v_t.row(times)=v_sp;
+            a_t.row(times)=a_sp;
+            yaw_t(times)=take_off_yaw;
+        }
+        else if(times < take_off_send_times)
+        {
+            double t_this = (times-take_off_send_times/2.0)*delta_t;
+            double vz_sp = take_off_send_times/2.0*delta_t*take_off_acc - take_off_acc*t_this;
+            double z_sp=1.0/2.0*take_off_acc*(take_off_time/2.0)*(take_off_time/2.0)+(vz_sp+take_off_time/2.0*take_off_acc)*t_this/2.0;
+
+            //ROS_INFO("Z_SP:%f",z_sp);
+            Vector3d p_sp(take_off_position(0), take_off_position(1), z_sp);
+            Vector3d v_sp(0, 0, vz_sp);
+            Vector3d a_sp(0, 0, -0);
+            p_t.row(times)=p_sp;
+            v_t.row(times)=v_sp;
+            a_t.row(times)=a_sp;
+            yaw_t(times)=0;
+        }
+        else
+        {
+            Vector3d tmp(take_off_position(0),take_off_position(1),take_off_height);
+            p_t.row(times)=tmp;
+            v_t.row(times)=Vector3d::Zero();
+            a_t.row(times)=Vector3d::Zero();
+            yaw_t(times)=0;
+        }
+    }
+}
+
+
+
 
 void pva_takeoff(double take_off_height)
 {
@@ -230,6 +297,66 @@ void pva_takeoff(double take_off_height)
         }
     }
 }
+
+void setpoint_land()
+{
+
+    Vector3d land_position=current_p;
+
+    double land_acc = 0.1;
+    double land_time=sqrt(land_position(2)/land_acc)*2.0;
+    double land_send_times = land_time / delta_t;
+    double times=0;
+    t_number=land_send_times+100;
+
+//    take_off_init=0;
+
+    ros::Time last_time=ros::Time::now();
+
+    p_t = Eigen::MatrixXd::Zero(t_number, 3);
+    v_t = Eigen::MatrixXd::Zero(t_number, 3);
+    a_t = Eigen::MatrixXd::Zero(t_number, 3);
+
+    for(times=0;times<t_number;times++)
+    {
+        if(times < land_send_times / 2.0)
+        {
+            double z_sp = land_position(2)-0.5*land_acc*times*delta_t*times*delta_t;
+            double vz_sp = -times*delta_t*land_acc;
+            Vector3d p_sp(land_position(0), land_position(1), z_sp);
+            Vector3d v_sp(0, 0, vz_sp);
+            Vector3d a_sp(0, 0, 0);
+            p_t.row(times)=p_sp;
+            v_t.row(times)=v_sp;
+            a_t.row(times)=a_sp;
+        }
+        else if(times < land_send_times)
+        {
+            double t_this = (times-land_send_times/2.0)*delta_t;
+            double vz_sp = -(land_send_times/2.0*delta_t*land_acc - land_acc*t_this);
+            double  z_sp = land_position(2)-(1.0/2.0*land_acc*(land_time/2.0)*(land_time/2.0)+(-vz_sp+land_time/2.0*land_acc)*t_this/2.0);
+            //ROS_INFO("Z_SP:%f",z_sp);
+            Vector3d p_sp(land_position(0), land_position(1), z_sp);
+            Vector3d v_sp(0, 0, vz_sp);
+            Vector3d a_sp(0, 0, -0);
+            p_t.row(times)=p_sp;
+            v_t.row(times)=v_sp;
+            a_t.row(times)=a_sp;
+        }
+        else
+        {
+            // ROS_INFO("LAND OVER---------------------------");
+            p_t.row(times)<<land_position(0),land_position(1),-100;
+            v_t.row(times)=Vector3d::Zero();
+            a_t.row(times)=Vector3d::Zero();
+        }
+    }
+}
+
+
+
+
+
 void pva_land()
 {
 
@@ -449,7 +576,20 @@ int main(int argc, char** argv)
         for(I=0;I<t_number;I++)
         {
             //ROS_INFO("DDDDD");
-            setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
+            //setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
+            pose.pose.position.x = p_t(I,0);
+            pose.pose.position.y = p_t(I,1);
+            pose.pose.position.z = p_t(I,2);
+
+            pose.pose.orientation.w=cos(yaw_t(I)/2);
+            pose.pose.orientation.x=0;
+            pose.pose.orientation.y=0;
+            pose.pose.orientation.z=sin(yaw_t(I)/2);
+            local_pos_pub.publish(pose);
+
+
+
+
             ros::spinOnce();
             loop_rate.sleep();
         }
@@ -463,7 +603,8 @@ int main(int argc, char** argv)
         while(t_number!=0&&I!=0&&I==t_number)
         {
             //ROS_INFO("AAAASSSDADADAD");
-            setPVA(p_t.row(t_number-1), Vector3d::Zero(), Vector3d::Zero(), yaw_t(t_number-1));//a_t.row(last_index));
+            //setPVA(p_t.row(t_number-1), Vector3d::Zero(), Vector3d::Zero(), yaw_t(t_number-1));//a_t.row(last_index));
+            local_pos_pub.publish(pose);
             ros::spinOnce();
             loop_rate.sleep();
         }
