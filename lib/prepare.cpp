@@ -13,7 +13,7 @@ Eigen::Vector2d hoverDriftSum = Eigen::Vector2d::Zero();
 Eigen::Vector2d hover2homeDrift = Eigen::Vector2d::Zero();
 //
 Eigen::Vector3d drift = Eigen::Vector3d::Zero();
-int hoverFunCount=300;
+int hoverFunCount=500;
 void setHoverPva();
 
 

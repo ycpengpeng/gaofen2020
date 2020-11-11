@@ -22,37 +22,39 @@ Eigen::Matrix<float,6,1> loop_height;
 loop_height<<1.8,1.4,1.8,1.4,1.4,1.4;*/
 
 
-double loop_height[6]={1.8,1.4,1.8,1.8,1.4,1.8};
-double loop_radius[6]={0.75,0.75,0.6,0.6,0.75,0.75};
+double loop_height[6]={1.35,1.45,1.55,1.60,1.60,1.75};
+double board_height[6]={0.5,0.6,0.9,0.7,0.9,1.0};
+
+//double loop_radius[6]={0.75,0.75,0.6,0.6,0.75,0.75};
 
 double frontPoints[6][10] =
         {
                 ///x,   y,   z,yaw,vx,vy,vz,ax,ay,az
-                {2.5 - frontLoopDistance, -1  , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
-                {5.2 - frontLoopDistance, -2.5, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
-                {7.2 - frontLoopDistance, -1.5, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
-                {9.5 - frontLoopDistance, 2.5 , loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
-                {13.5- frontLoopDistance, 2   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
-                {18-frontLoopDistance , -2.8,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
+                {2.5 - frontLoopDistance, -1.5  , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
+                {4.7 - frontLoopDistance, -2.9, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
+                {6.82 - frontLoopDistance, -1.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
+                {9.6 - frontLoopDistance, 2.75 , loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
+                {13- frontLoopDistance, 2   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
+                {18.8-frontLoopDistance , -1.6,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
         };
 
 double centerPoints[7][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {2.5 + behindLoopDistance, -1   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
-                {5.2 + behindLoopDistance, -2.5 ,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
-                {7.2 + behindLoopDistance, -1.5 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
-                {9.5 + behindLoopDistance, 2.5  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
-                {13.5+1, 2    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
-                {19 , -2.8,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
+                {2.5 + behindLoopDistance, -1.5   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
+                {4.7 + behindLoopDistance, -2.9 ,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
+                {6.82 + behindLoopDistance, -1.15 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
+                {9.6 + behindLoopDistance, 2.5  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
+                {13.5+0.5, 2    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
+                {18.8+0.5, -1.6,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
         };
 
 double blindPoints[4][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {13.5+1 ,2, 3.8   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
-                {16.5 , -2.8, 3.8 , 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
-                {22 , 0,loop_height[5] , 0, 0, 0, 0, 0, 0, 0},  //dot_15
+                {13.5+0.5 ,2, 2.5   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
+                {18.8-frontLoopDistance , -1.6, 2.5 , 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
+                {21.5 , 0,loop_height[5] , 0, 0, 0, 0, 0, 0, 0},  //dot_15
 
         };
 
@@ -190,7 +192,7 @@ void setBoardPva(int numberLoop)  //飞到牌子前面
 
     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][0]-drift.x());
     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][1]-drift.y());
-    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][2]-loop_radius[numberLoop]-0.225-drift.z());
+    pvaTargetPointMsg.positions.push_back(board_height[numberLoop]-drift.z());
     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][3]);
 
     pvaTargetPointMsg.velocities.push_back(frontPoints[numberLoop][4]);
@@ -299,14 +301,14 @@ void update_drift(int numberLoop)
     ///drift = given - visionPose
 
     ///drift = given - visionPose
-    if(visionPose.pose.orientation.w!=-1000&&visionPose.pose.orientation.x==numberLoop+1)
+    if(visionPose.pose.orientation.w==1&&visionPose.pose.orientation.x==numberLoop+1)
     {
 /*        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;
         drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
         drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;*/
         drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x;
         drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y;
-        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z;
+        drift.z() =  board_height[numberLoop]-visionPose.pose.position.z;
 
     }
 /*    drift.x()=0;

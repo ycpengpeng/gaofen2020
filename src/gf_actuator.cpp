@@ -40,6 +40,15 @@ geometry_msgs::PoseStamped pose;
 
 unsigned int t_number=0;     //离散点的数量
 
+Eigen::Quaterniond euler2quaternion_eigen(float roll, float pitch, float yaw)
+{
+    Eigen::Quaterniond temp;
+    temp.w() = cos(roll/2)*cos(pitch/2)*cos(yaw/2) + sin(roll/2)*sin(pitch/2)*sin(yaw/2);
+    temp.x() = sin(roll/2)*cos(pitch/2)*cos(yaw/2) - cos(roll/2)*sin(pitch/2)*sin(yaw/2);
+    temp.y() = cos(roll/2)*sin(pitch/2)*cos(yaw/2) + sin(roll/2)*cos(pitch/2)*sin(yaw/2);
+    temp.z() = cos(roll/2)*cos(pitch/2)*sin(yaw/2) - sin(roll/2)*sin(pitch/2)*cos(yaw/2);
+    return temp;
+}
 
 Eigen::Vector3d quaternion2euler_eigen(float x, float y, float z, float w)
 {
@@ -67,7 +76,7 @@ void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 
     ///TODO
     current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
-   // ROS_INFO_THROTTLE(3,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
+    ROS_INFO_THROTTLE(3,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
     current_att.y() = msg->pose.orientation.y;
@@ -108,7 +117,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
 {
     //ros::Time tmp=ros::Time::now();
 
-//ROS_ERROR_THROTTLE(10,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+    ROS_ERROR_THROTTLE(10,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
 
     planned_p << msg->positions[0], msg->positions[1], msg->positions[2];
     if(last_planned_p(0)==planned_p(0)&&last_planned_p(1)==planned_p(1)&&last_planned_p(2)==planned_p(2))
@@ -150,7 +159,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
     else if(numberloop>=0)//zuan_quan!!!!!!!!!!!!!!!!!!!!
     {
         //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
-       //ROS_ERROR_THROTTLE(1,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+        ROS_ERROR_THROTTLE(1,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
