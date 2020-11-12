@@ -9,7 +9,7 @@ int loopStep = 0;
 double frontLoopDistance = 1.1;
 double behindLoopDistance = 0.5;
 double height = 1.0;
-double velocityX = 0;
+double velocityX = 0.5;
 
 trajectory_msgs::JointTrajectoryPoint pvaTargetPointMsg;
 
@@ -43,8 +43,8 @@ double frontPoints[6][10] =
                 {4.6 - 1.5 -0.2, -2.7 + 0.2, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
                 {6.67-0.2 - frontLoopDistance-0.2, -1.0-0.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
                 {9.34-0.3- frontLoopDistance, 2.89 -0.1, loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
-                {12.75- frontLoopDistance, 2.0+0.1   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
-                {18.4-frontLoopDistance , -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
+                {12.75- frontLoopDistance-0.15-0.2  , 2.0+0.3   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
+                {18.4-frontLoopDistance , -2.15+0.4 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
         };
 
 
@@ -55,16 +55,16 @@ double centerPoints[7][10] =
                 {4.6 + 0.1+ behindLoopDistance, -2.7 +0.2,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
                 {6.67 + behindLoopDistance, -1.0-0.15 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
                 {9.34 + behindLoopDistance, 2.89-0.1  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
-                {12.75+0.5, 2+0.1    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
-                {18.4+0.5, -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
+                {12.75+0.5, 2+0.3    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
+                {18.4+0.5, -2.15+0.4 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
         };
 
-double blindPoints[4][10] =
+double blindPoints[3][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {12.75+0.5 ,2.0, 2.8   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
-                {18.4-frontLoopDistance , -1.6, 2.8, 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
-                {21.5 , 0,loop_height[5] , 0, 0, 0, 0, 0, 0, 0},  //dot_15
+                {12.75+0.5 ,2.0+0.1, 2.2  , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
+                {18.4-frontLoopDistance+0.5 , -2.15+0.2, 2.2, 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
+                {18.4-frontLoopDistance+0.5 , -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_15
 
         };
 

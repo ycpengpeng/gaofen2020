@@ -33,8 +33,8 @@
 #include <cstdint>
 
 #define PI 3.1415926
-#define LOOPRATE 30
-#define delta_t 0.033333
+#define LOOPRATE 40
+#define delta_t 0.025
 
 
 
