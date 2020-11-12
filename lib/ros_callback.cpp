@@ -61,14 +61,16 @@ void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 /*    else
     {*/
     visionPose = *msg;
+   // ROS_INFO("W:%f",visionPose.pose.orientation.w);
+//ROS_INFO("x:%f",visionPose.pose.orientation.x);
     //}
 }
 
 
 void stateT265Cb(const nav_msgs::Odometry::ConstPtr& msg){
     dronePoseT265 = *msg;
-    dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.y;
-    dronePoseCurrent.pose.position.y =- dronePoseT265.pose.pose.position.x;
+    // dronePoseCurrent.pose.position.x= dronePoseT265.pose.pose.position.y;
+    // dronePoseCurrent.pose.position.y =- dronePoseT265.pose.pose.position.x;
 
 
 }
@@ -92,7 +94,7 @@ void stateHeightCb(const mavros_msgs::Altitude::ConstPtr &msg){
 
     //cout<<"height"<<-realHeight.z()<<endl;
 
-    planeCurrHeight = -realHeight.z();
+   // planeCurrHeight = -realHeight.z();
 
 }
 
@@ -105,6 +107,9 @@ void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 void statePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg)
 {
     dronePoseLp = *msg;
+    planeCurrHeight=dronePoseLp.pose.position.z;
+    dronePoseCurrent.pose.position.x=dronePoseLp.pose.position.x;
+    dronePoseCurrent.pose.position.y=dronePoseLp.pose.position.y;
     ///TODO: Only fo Simulation!!!!!!!
 /*    planeCurrHeight=dronePoseLp.pose.position.z;
     dronePoseCurrent.pose.position.x=dronePoseLp.pose.position.x;

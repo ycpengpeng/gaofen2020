@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
     /**
      * main loop
      */
-
+    ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 1);
     while(ros::ok())
     {
         ros::spinOnce();
@@ -34,10 +34,24 @@ int main(int argc, char **argv) {
         //if(currentStateMsg.mode != "OFFBOARD" || !currentStateMsg.armed)
         if(currentStateMsg.mode != "OFFBOARD" )
         {
+          //  ROS_INFO("090909");
             stateStep=1;
-            setBeforeOffbPva();
-            pubPvaTargetPoint.publish(pvaTargetPointMsg);
-            continue;
+            geometry_msgs::PoseStamped pose;
+
+            pose.pose.position.x = 0;
+            pose.pose.position.y = 0;
+            pose.pose.position.z = 0.01;
+            double theta=90.0/180.0*3.1415926;
+            pose.pose.orientation.w=cos(theta/2);
+            pose.pose.orientation.x=0;
+            pose.pose.orientation.y=0;
+            pose.pose.orientation.z=sin(theta/2);
+            local_pos_pub.publish(pose);
+
+            // setBeforeOffbPva();
+            // pubPvaTargetPoint.publish(pvaTargetPointMsg);
+
+            // continue;
         }
         switch (stateStep)
         {
@@ -46,11 +60,12 @@ int main(int argc, char **argv) {
             }
             break;
 
-            case 1: if(take_off_func()){
+            case 1: if(take_off_func(currentStateMsg)){
                 stateStep += 1;
             }
+            
             break;
-
+            
             case 2: if(hover_and_adjust_func()){
                 stateStep += 1;
             }

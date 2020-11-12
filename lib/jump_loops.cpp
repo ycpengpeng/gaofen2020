@@ -22,38 +22,48 @@ Eigen::Matrix<float,6,1> loop_height;
 loop_height<<1.8,1.4,1.8,1.4,1.4,1.4;*/
 
 
-double loop_height[6]={1.35,1.45,1.55,1.60,1.60,1.75};
-double board_height[6]={0.5,0.6,0.9,0.7,0.9,1.0};
+double loop_height[6]={1.35-0.1,1.45,1.55,1.60,1.60,1.75};
+double board_height[6]={0.5,0.7-0.2,0.9-0.2,0.7,0.9,1.0};
 
 //double loop_radius[6]={0.75,0.75,0.6,0.6,0.75,0.75};
+
+double loop_pose[6][2]={{2.3,-1.5},
+                                                        {4.6,-2.7},
+                                                    {6.67,-1.0},
+                                                    {9.34,2.89},
+                                                    {12.75,2.0},
+                                                    {18.4,-2.15}};
+
+
 
 double frontPoints[6][10] =
         {
                 ///x,   y,   z,yaw,vx,vy,vz,ax,ay,az
-                {2.5 - frontLoopDistance, -1.5  , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
-                {4.7 - frontLoopDistance, -2.9, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
-                {6.82 - frontLoopDistance, -1.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
-                {9.6 - frontLoopDistance, 2.75 , loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
-                {13- frontLoopDistance, 2   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
-                {18.8-frontLoopDistance , -1.6,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
+                {2.3 - frontLoopDistance, -1.5  , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
+                {4.6 - 1.5 -0.2, -2.7 + 0.2, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
+                {6.67-0.2 - frontLoopDistance-0.2, -1.0-0.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
+                {9.34-0.3- frontLoopDistance, 2.89 -0.1, loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
+                {12.75- frontLoopDistance, 2.0+0.1   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
+                {18.4-frontLoopDistance , -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
         };
+
 
 double centerPoints[7][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {2.5 + behindLoopDistance, -1.5   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
-                {4.7 + behindLoopDistance, -2.9 ,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
-                {6.82 + behindLoopDistance, -1.15 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
-                {9.6 + behindLoopDistance, 2.5  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
-                {13.5+0.5, 2    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
-                {18.8+0.5, -1.6,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
+                {2.3+ 0.5, -1.5   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
+                {4.6 + 0.1+ behindLoopDistance, -2.7 +0.2,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
+                {6.67 + behindLoopDistance, -1.0-0.15 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
+                {9.34 + behindLoopDistance, 2.89-0.1  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
+                {12.75+0.5, 2+0.1    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
+                {18.4+0.5, -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
         };
 
 double blindPoints[4][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {13.5+0.5 ,2, 2.5   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
-                {18.8-frontLoopDistance , -1.6, 2.5 , 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
+                {12.75+0.5 ,2.0, 2.8   , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
+                {18.4-frontLoopDistance , -1.6, 2.8, 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
                 {21.5 , 0,loop_height[5] , 0, 0, 0, 0, 0, 0, 0},  //dot_15
 
         };
@@ -63,42 +73,54 @@ bool go_to_loop(int numberLoop)
 
     if(numberLoop==0)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==1)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==2)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==3)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==4)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==5)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
     if(numberLoop==6)
     {
-        ROS_ERROR_ONCE("----start loop %d",numberLoop);
+        ROS_INFO_ONCE("----start loop %d",numberLoop);
     }
 
     if(loopStep==0)
     {
-        update_drift(numberLoop);
+        if(numberLoop==0)
+        {
+            loopStep=1;
+            ROS_INFO("go to loop %d front center",numberLoop);
+            return false;
+        }
         setBoardPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
+        if(update_drift(numberLoop))
+        {
+            loopStep=1;
+            ROS_INFO("go to loop %d front center",numberLoop);
+        }
+
         if(isArrivedBoard(numberLoop))
         {
-            ROS_INFO("go to loop %d front center",numberLoop);
             loopStep=1;
+            ROS_INFO("go to loop %d front center",numberLoop);
+         
         }
         return false;
 
@@ -106,7 +128,7 @@ bool go_to_loop(int numberLoop)
 
     if(loopStep==1) //飞到圆心正前方
     {
-        update_drift(numberLoop);
+       // update_drift(numberLoop);
 
         setFrontPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
@@ -120,13 +142,14 @@ bool go_to_loop(int numberLoop)
 
     if(loopStep==2)  //飞到圆心后面
     {
-        update_drift(numberLoop);
+       // update_drift(numberLoop);
         ///TODO ONLY IN SIMULATION
         setCenterPva(numberLoop);
         pubPvaTargetPoint.publish(pvaTargetPointMsg);
         if(isArrivedCenter(numberLoop))
         {
-            loopStep=0;
+            ROS_INFO("ARRIVED loop %d back",numberLoop);
+             loopStep=0;
             return true;
         }
         return false;
@@ -268,7 +291,7 @@ bool isArrivedBoard(int numberLoop)
 }
 
 bool isArrivedFront(int numberLoop){
-    if(abs(dronePoseCurrent.pose.position.x-(frontPoints[numberLoop][0]-drift.x()))<0.1 &&
+    if(abs(dronePoseCurrent.pose.position.x-(frontPoints[numberLoop][0]-drift.x()))<0.1&&
        abs(dronePoseCurrent.pose.position.y-(frontPoints[numberLoop][1]-drift.y()))<0.1 &&
        abs(planeCurrHeight-(frontPoints[numberLoop][2]-drift.z()))<0.1)
         return true;
@@ -296,24 +319,40 @@ bool isArrivedCenter(int numberLoop){
 }
 
 
-void update_drift(int numberLoop)
+bool update_drift(int numberLoop)
 {
     ///drift = given - visionPose
+
 
     ///drift = given - visionPose
     if(visionPose.pose.orientation.w==1&&visionPose.pose.orientation.x==numberLoop+1)
     {
-/*        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x-dronePoseCurrent.pose.position.x;
-        drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
-        drift.z() =  loop_height[numberLoop]-loop_radius[numberLoop]-0.225- visionPose.pose.position.z-planeCurrHeight;*/
-        drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x;
-        drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y;
-        drift.z() =  board_height[numberLoop]-visionPose.pose.position.z;
-
+     
+     
+     
+        drift.x() =  loop_pose[numberLoop][0]- visionPose.pose.position.x-dronePoseCurrent.pose.position.x;
+        drift.y() =  loop_pose[numberLoop][1] - visionPose.pose.position.y-dronePoseCurrent.pose.position.y;
+        drift.z() = board_height[numberLoop]- visionPose.pose.position.z-planeCurrHeight;
+        // drift.x() =  frontPoints[numberLoop][0]+frontLoopDistance - visionPose.pose.position.x;
+        // drift.y() =  frontPoints[numberLoop][1] - visionPose.pose.position.y;
+        // drift.z() =  board_height[numberLoop]-visionPose.pose.position.z;
+        ROS_INFO("VISIONPOSE.X:  %f     dronePoseCurrent.x:  %f", visionPose.pose.position.x,dronePoseCurrent.pose.position.x);
+                ROS_INFO("VISIONPOSE.y:  %f     dronePoseCurrent.y:  %f", visionPose.pose.position.y,dronePoseCurrent.pose.position.y);
+                        ROS_INFO("VISIONPOSE.z:  %f     dronePoseCurrent.z:  %f", visionPose.pose.position.z,planeCurrHeight);
+        ROS_INFO("target_p: %f  %f  %f", pvaTargetPointMsg.positions[0], pvaTargetPointMsg.positions[1], pvaTargetPointMsg.positions[2]);
+        ROS_INFO("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+        return true;
     }
-/*    drift.x()=0;
-    drift.y()=0;
-    drift.z()=0;*/
+    else
+    {
+        /* code */
+        return false;
+    }
+    
+    
+//  drift.x()=0;
+//  drift.y()=0;
+//  drift.z()=0;
 
 /*    drift.x() =  frontLoopDistance - visionPose.pose.position.x;//
     drift.y() =  visionPose.pose.position.y;

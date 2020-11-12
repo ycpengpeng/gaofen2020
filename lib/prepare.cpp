@@ -13,12 +13,18 @@ Eigen::Vector2d hoverDriftSum = Eigen::Vector2d::Zero();
 Eigen::Vector2d hover2homeDrift = Eigen::Vector2d::Zero();
 //
 Eigen::Vector3d drift = Eigen::Vector3d::Zero();
-int hoverFunCount=500;
+int hoverFunCount=300;
 void setHoverPva();
 
 
 void setBeforeOffbPva()
 {
+
+
+    
+    
+    
+    
     pvaTargetPointMsg.positions.clear();
     pvaTargetPointMsg.velocities.clear();
     pvaTargetPointMsg.accelerations.clear();
@@ -26,7 +32,7 @@ void setBeforeOffbPva()
 
     pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.x);
     pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.y);
-    pvaTargetPointMsg.positions.push_back(dronePoseLp.pose.position.z);
+    pvaTargetPointMsg.positions.push_back(0.001);
     pvaTargetPointMsg.positions.push_back(0);
 
     pvaTargetPointMsg.velocities.push_back(0);
@@ -38,6 +44,7 @@ void setBeforeOffbPva()
     pvaTargetPointMsg.accelerations.push_back(0);
 
     pvaTargetPointMsg.effort.push_back(0);
+
 
 }
 
@@ -54,41 +61,138 @@ double takeOffPoint[10]=
  * get yawdegree before taking off
  */
 bool get_yaw_fun(){
+//     ros::NodeHandle nh;
+//             geometry_msgs::PoseStamped pose;
+//   ros::Publisher local_pos_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 1);
+//             pose.pose.position.x = 0;
+//             pose.pose.position.y = 0;
+//             pose.pose.position.z = 0.01;
 
-/*    droneEuler = quaternion2euler_eigen(dronePoseLp.pose.orientation.x,dronePoseLp.pose.orientation.y,dronePoseLp.pose.orientation.z,dronePoseLp.pose.orientation.w);
+//             pose.pose.orientation.w=1;
+//             pose.pose.orientation.x=0;
+//             pose.pose.orientation.y=0;
+//             pose.pose.orientation.z=0;
+//             local_pos_pub.publish(pose);
+ // droneEuler = quaternion2euler_eigen(dronePoseLp.pose.orientation.x,dronePoseLp.pose.orientation.y,dronePoseLp.pose.orientation.z,dronePoseLp.pose.orientation.w);
     //droneEuler = quaternion2euler_eigen(dronePoseT265.pose.pose.orientation.x,dronePoseT265.pose.pose.orientation.y,dronePoseT265.pose.pose.orientation.z,dronePoseT265.pose.pose.orientation.w);
-    initYaw = droneEuler.z();
+  //  initYaw = droneEuler.z();
 
     ///get average-init-number through 100 times of calculation
+    //ROS_INFO("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+
+
+
+
+    // setBeforeOffbPva();
+    // pubPvaTargetPoint.publish(pvaTargetPointMsg);
+
+//ROS_INFO("pvaTargetPointMsg  X  %f   y  %f    z   %f",pvaTargetPointMsg.positions[0],pvaTargetPointMsg.positions[1],pvaTargetPointMsg.positions[2]);
+
+
     getYawFuncCount--;
-    if(getYawFuncCount)
+   // ROS_INFO("YAW FUNCTION:%d",getYawFuncCount);
+    if(getYawFuncCount<0)
     {
-        droneHomeSum.x() += dronePoseT265.pose.pose.position.x;
-        droneHomeSum.y() += dronePoseT265.pose.pose.position.y;
-        suminitYaw += initYaw;
+        //ROS_INFO("0000");
+        return true;
+    }
+    if(getYawFuncCount==0)
+    {
+        //ROS_INFO("1111111");
+        droneHomeSum.x() +=dronePoseCurrent.pose.position.x;
+        droneHomeSum.y() +=dronePoseCurrent.pose.position.y;
+
+        for (int i = 0; i < 3; i++)
+        {
+            // frontPoints[i][3] = initYaw;
+            // centerPoints[i][3] = initYaw;
+            // blindPoints[i][3] = initYaw;
+            
+            blindPoints[i][0]+=droneHome.x();
+            blindPoints[i][1]+=droneHome.y();
+
+         }
+
+        for (int i = 0; i < 6; i++)
+        {
+            // frontPoints[i][3] = initYaw;
+            // centerPoints[i][3] = initYaw;
+            // blindPoints[i][3] = initYaw;
+            
+            frontPoints[i][0]+=droneHome.x();
+            frontPoints[i][1]+=droneHome.y();
+            centerPoints[i][0]+=droneHome.x();
+             centerPoints[i][1]+=droneHome.y();
+             loop_pose[i][0]+=droneHome.x();
+             loop_pose[i][1]+=droneHome.y();
+        }
+
+        for (int i = 0; i < 2; i++)
+        {
+            // frontPoints[i][3] = initYaw;
+            // centerPoints[i][3] = initYaw;
+            // blindPoints[i][3] = initYaw;
+            
+            landOffPoints[i][0]+=droneHome.x();
+            landOffPoints[i][1]+=droneHome.y();
+
+        }
+
         return false;
     }
     else
     {
-        initYaw = suminitYaw/100.0;
-        for (int i = 0; i < 6; i++)
-        {
-            frontPoints[i][3] = initYaw;
-            centerPoints[i][3] = initYaw;
-            blindPoints[i][3] = initYaw;
-        }
-        droneHome.x() = droneHomeSum.x()/100.0;
-        droneHome.y() = droneHomeSum.y()/100.0;
-        return true;
-    }*/
-return true;
+        // ROS_INFO("2222222");
+        // //initYaw = suminitYaw/100.0;
+
+        // droneHome.x() = droneHomeSum.x()/100.0;
+        // droneHome.y() = droneHomeSum.y()/100.0;
+        // for (int i = 0; i < 6; i++)
+        // {
+        //     // frontPoints[i][3] = initYaw;
+        //     // centerPoints[i][3] = initYaw;
+        //     // blindPoints[i][3] = initYaw;
+            
+        //     frontPoints[i][0]+=droneHome.x();
+        //     frontPoints[i][1]+=droneHome.y();
+        //     centerPoints[i][0]+=droneHome.x();
+        //      centerPoints[i][1]+=droneHome.y();
+        //      loop_pose[i][0]+=droneHome.x();
+        //      loop_pose[i][1]+=droneHome.y();
+        // }
+
+        // for (int i = 0; i < 3; i++)
+        // {
+        //     // frontPoints[i][3] = initYaw;
+        //     // centerPoints[i][3] = initYaw;
+        //     // blindPoints[i][3] = initYaw;
+            
+        //     blindPoints[i][0]+=droneHome.x();
+        //     blindPoints[i][1]+=droneHome.y();
+
+        // }
+
+        
+        // for (int i = 0; i < 2; i++)
+        // {
+        //     // frontPoints[i][3] = initYaw;
+        //     // centerPoints[i][3] = initYaw;
+        //     // blindPoints[i][3] = initYaw;
+            
+        //     landOffPoints[i][0]+=droneHome.x();
+        //     landOffPoints[i][1]+=droneHome.y();
+
+        // }
+         return true;
+    }
+
 }
 
 
 /**
  * take off precess
  */
-bool take_off_func()
+bool take_off_func(mavros_msgs::State state)
 {
 
 /*    if(currentStateMsg.armed) {
@@ -98,24 +202,32 @@ bool take_off_func()
         ROS_INFO("Not armed !");
     }*/
 
+    if(currentStateMsg.mode != "OFFBOARD" )
+    {
+        get_yaw_fun();
+        return false;
+    }
+
+
     ///checking Mode before taking off
 
     ROS_INFO_ONCE("TAKE_OFF MODE!!!");
-    if(currentStateMsg.mode == "OFFBOARD")
-    {
+    
+    
 /*        ROS_WARN("OFFBOARD NOW !");
         ROS_WARN("Ready to climb to home hover height");
         ROS_WARN("Height now is %f", planeCurrHeight);
         ROS_WARN("Required height is %f", homeHoverHeight);*/
-        if(abs(planeCurrHeight-homeHoverHeight) < 0.1){
+    if(abs(planeCurrHeight-homeHoverHeight) < 0.1){
+            hoverFunCount=100;
             return true;
-        }
     }
-
+    
+    //ROS_INFO("ASDDDDDDDDDDDDD");
     ///else, continuing send target point to px4
 //    px4PointMsg.header.stamp = ros::Time::now();
 //    px4PointMsg.pose.position.x = droneHome.x();
-//    px4PointMsg.pose.position.y = droneHome.y();
+//    px4PointMsg.pose  .position.y = droneHome.y();
 //    px4PointMsg.pose.position.z = homeHoverHeight;
 
     ///set takeoff point
@@ -125,6 +237,7 @@ bool take_off_func()
 
     setTakeOffPva();
     pubPvaTargetPoint.publish(pvaTargetPointMsg);
+    ROS_INFO("---------------target height:%f",pvaTargetPointMsg.positions[2]);
 
     //pubPx4Point.publish(px4PointMsg);
 //    cout << "px4_position_msg.pose.position.x: " << px4PointMsg.pose.position.x << endl;

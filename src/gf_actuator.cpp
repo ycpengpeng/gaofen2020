@@ -76,7 +76,8 @@ void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 
     ///TODO
     current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
-    ROS_INFO_THROTTLE(3,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
+    //ROS_INFO_THROTTLE(2,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
+     ROS_ERROR_THROTTLE(2,"gf_actuator:delta_P %f %f %f",current_p(0)-planned_p(0),current_p(1)-planned_p(1),current_p(2)-planned_p(2));
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
     current_att.y() = msg->pose.orientation.y;
@@ -159,7 +160,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
     else if(numberloop>=0)//zuan_quan!!!!!!!!!!!!!!!!!!!!
     {
         //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
-        ROS_ERROR_THROTTLE(1,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+        ROS_ERROR_THROTTLE(1,"gf_actuator:delta_P %f %f %f",current_p(0)-planned_p(0),current_p(1)-planned_p(1),current_p(2)-planned_p(2));
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
@@ -582,7 +583,7 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         ros::spinOnce();
-        for(I=0;I<t_number;I++)
+        for(I=1;I<t_number;I++)
         {
             //ROS_INFO("DDDDD");
             //setPVA(p_t.row(I), v_t.row(I), a_t.row(I), yaw_t(I));//a_t.row(last_index));
@@ -597,6 +598,7 @@ int main(int argc, char** argv)
             pose.pose.orientation.y=0;
             pose.pose.orientation.z=sin(yaw_t(I)/2);
             local_pos_pub.publish(pose);
+            
 
             ros::spinOnce();
             loop_rate.sleep();
@@ -618,7 +620,7 @@ int main(int argc, char** argv)
         }
         //ROS_INFO("I:%d  t_number:%d",I,t_number);
 
-
     }
     return 0;
+
 }

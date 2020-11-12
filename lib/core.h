@@ -63,7 +63,7 @@ extern geometry_msgs::PoseStamped px4PointMsg;
  */
 extern bool isArrivedFront(int numberLoop);
 extern bool isArrivedCenter(int numberLoop);
-extern void update_drift(int numberLoop);
+extern bool update_drift(int numberLoop);
 
 extern bool go_to_loop(int numberLoop);
 extern void setFrontPva(int numberLoop);
@@ -79,6 +79,7 @@ extern double velocityX;
 extern double frontPoints[6][10];
 extern double blindPoints[4][10];
 extern double centerPoints[7][10];
+extern double landOffPoints[2][10];
 extern trajectory_msgs::JointTrajectoryPoint pvaTargetPointMsg;
 
 
@@ -103,7 +104,7 @@ extern Eigen::Vector3d drift;
 extern int hoverFunCount;
 //extern double takeOffHeight;
 extern bool get_yaw_fun();
-extern bool take_off_func();
+extern bool take_off_func(mavros_msgs::State state);
 extern bool hover_and_adjust_func();
 
 /**
@@ -133,5 +134,7 @@ extern void stateModeCb(const mavros_msgs::State::ConstPtr& msg);
 extern void stateDownCamerePoseCb(const geometry_msgs::PoseStamped::ConstPtr& msg);
 
 extern bool land_off(int landOffStep);
+
+extern double loop_pose[6][2];
 
 #endif //GAOFEN2020_CORE_H
