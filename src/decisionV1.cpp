@@ -25,6 +25,18 @@ int main(int argc, char **argv) {
      * main loop
      */
 
+
+
+/*    geometry_msgs::PoseStamped pose;
+    pose.pose.position.x = 0;
+    pose.pose.position.y = 0;
+    pose.pose.position.z =0.5;
+    double theta=180.0/180.0*PI;
+    pose.pose.orientation.w=cos(theta/2);
+    pose.pose.orientation.x=0;
+    pose.pose.orientation.y=0;
+    pose.pose.orientation.z=sin(theta/2);*/
+
     while(ros::ok())
     {
         ros::spinOnce();
@@ -34,8 +46,7 @@ int main(int argc, char **argv) {
         if(currentStateMsg.mode != "OFFBOARD" )
         {
             stateStep=1;
-            setBeforeOffbPva();
-            pubPvaTargetPoint.publish(pvaTargetPointMsg);
+            take_off_func();
             continue;
         }
         switch (stateStep)

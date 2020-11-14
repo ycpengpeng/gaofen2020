@@ -415,6 +415,8 @@ void pva_land()
 void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d pf,Vector3d vf,Vector3d af,unsigned int &t_num,
                                   double yawf)
 {
+    ROS_INFO("QQQQQQ");
+/*
     double T1, T2, T3, T;
     double delt_x, delt_y, delt_z;
     //ROS_INFO("pf(0):  %f,pf(1):   %f,pf(2):   %f",pf(0),pf(1),pf(2));
@@ -444,9 +446,10 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
     if(T==-1)
     {
         ROS_INFO("T=-1////////////////");
-/*        delt_x=pf(0)-p0(0);
+        delt_x=pf(0)-p0(0);
         delt_y=pf(1)-p0(1);
-        delt_z=pf(2)-p0(2);*/
+        delt_z=pf(2)-p0(2);
+
 
     }
 
@@ -492,6 +495,52 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
     {
         yaw_t(times)=yawf;
     }
+*/
+
+
+
+    double T1, T2, T3, T;
+    double delt_x, delt_y, delt_z;
+    //ROS_INFO("pf(0):  %f,pf(1):   %f,pf(2):   %f",pf(0),pf(1),pf(2));
+    delt_x=pf(0)-p0(0);
+    delt_y=pf(1)-p0(1);
+    delt_z=pf(2)-p0(2);
+
+    T1 = delt_x/0.5;  //速度设为0.5m/s
+    T2 =delt_y/0.5;
+    T3 = delt_z/0.5;
+    T = T1 > T2 ? T1 : T2;
+    T = T > T3 ? T : T3;
+    T = T < 0.5 ? 0.5 : T;
+
+    t_num=T/delta_t;  //number of dots
+    p_t = Eigen::MatrixXd::Zero(t_num, 3);
+    v_t = Eigen::MatrixXd::Zero(t_num, 3);
+    a_t = Eigen::MatrixXd::Zero(t_num, 3);
+    //t = Eigen::VectorXd::Zero(t_num);
+
+    for(int times = 0; times < t_num; times++)
+    {
+        p_t(times, 0) =p0(0)+delt_x/(T/delta_t)*times;
+        //ROS_INFO("p_t(times, 0) %f",p_t(times, 0));
+    }
+    for(int times = 0; times < t_num; times++)
+    {
+        p_t(times, 1) =p0(1)+delt_y/(T/delta_t)*times;
+    }
+    for(int times = 0; times < t_num; times++)
+    {
+        p_t(times, 2) =p0(2)+delt_z/(T/delta_t)*times;
+    }
+    yaw_t = Eigen::VectorXd::Zero(t_num);
+    for(int times=0;times<t_num;times++)
+    {
+        yaw_t(times)=yawf;
+    }
+
+
+    //ROS_INFO("p_t(t_num-1,0):  %f,p_t(t_num-1,1):  %f,p_t(t_num-1,2):  %f",p_t(t_num-1,0),p_t(t_num-1,1),p_t(t_num-1,2));
+
 }
 
 void setPVA(Eigen::Vector3d p, Eigen::Vector3d v, Eigen::Vector3d a, double yaw=0.0)
