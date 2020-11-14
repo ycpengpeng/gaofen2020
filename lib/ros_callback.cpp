@@ -61,8 +61,8 @@ void stateVisionCb(const geometry_msgs::PoseStamped::ConstPtr& msg){
 /*    else
     {*/
     visionPose = *msg;
-   // ROS_INFO("W:%f",visionPose.pose.orientation.w);
-//ROS_INFO("x:%f",visionPose.pose.orientation.x);
+//    ROS_INFO("W:%f",visionPose.pose.orientation.w);
+// ROS_INFO("x:%f",visionPose.pose.orientation.x);
     //}
 }
 

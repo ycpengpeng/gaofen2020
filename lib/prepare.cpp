@@ -280,7 +280,7 @@ bool hover_and_adjust_func()
     {
         return true;
     }
-    else if(hoverFunCount==-1000)
+    else if(hoverFunCount==-500)
     {
         return true;
     }

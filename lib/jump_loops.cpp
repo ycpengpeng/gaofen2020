@@ -22,7 +22,7 @@ Eigen::Matrix<float,6,1> loop_height;
 loop_height<<1.8,1.4,1.8,1.4,1.4,1.4;*/
 
 
-double loop_height[6]={1.35-0.1,1.45,1.55,1.60,1.60,1.75};
+double loop_height[6]={1.35-0.1,1.45,1.55,1.60,1.60,1.75+0.3};
 double board_height[6]={0.5,0.7-0.2,0.9-0.2,0.7,0.9,1.0};
 
 //double loop_radius[6]={0.75,0.75,0.6,0.6,0.75,0.75};
@@ -39,32 +39,32 @@ double loop_pose[6][2]={{2.3,-1.5},
 double frontPoints[6][10] =
         {
                 ///x,   y,   z,yaw,vx,vy,vz,ax,ay,az
-                {2.3 - frontLoopDistance, -1.5  , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
-                {4.6 - 1.5 -0.2, -2.7 + 0.2, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
-                {6.67-0.2 - frontLoopDistance-0.2, -1.0-0.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
+                {2.3 - frontLoopDistance, -1.5 +0.1 , loop_height[0], 0, velocityX, 0, 0, 0, 0, 0},//dot_1
+                {4.6 - 1.5 -0.1 , -2.7 + 0.2-0.1, loop_height[1], 0, velocityX, 0, 0, 0, 0, 0},  //dot_3
+                {6.67-0.2 - frontLoopDistance-0.2-0.1, -1.0-0.15, loop_height[2], 0, velocityX, 0, 0, 0, 0, 0},//dot_5
                 {9.34-0.3- frontLoopDistance, 2.89 -0.1, loop_height[3], 0, velocityX, 0, 0, 0, 0, 0},//dot_7
-                {12.75- frontLoopDistance-0.15-0.2  , 2.0+0.3   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
-                {18.4-frontLoopDistance , -2.15+0.4 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
+                {12.75- frontLoopDistance-0.15-0.2  , 2.0+0.1   , loop_height[4], 0, velocityX, 0, 0, 0, 0, 0},//dot_9
+                {18.4 - 1.4 -0.4, -1.8 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_13
         };
 
 
 double centerPoints[7][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {2.3+ 0.5, -1.5   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
-                {4.6 + 0.1+ behindLoopDistance, -2.7 +0.2,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
-                {6.67 + behindLoopDistance, -1.0-0.15 ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
+                {2.3+ 0.5, -1.5 +0.1   , loop_height[0] , 0, velocityX, 0, 0, 0, 0, 0}, //dot_2
+                {4.6 + 0.1+ behindLoopDistance, -2.7 +0.2 -0.1,loop_height[1]  , 0, velocityX, 0, 0, 0, 0, 0}, //dot_4
+                {6.67 + behindLoopDistance, -1.0  ,loop_height[2]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_6
                 {9.34 + behindLoopDistance, 2.89-0.1  , loop_height[3]  , 0, velocityX, 0, 0, 0, 0, 0},//dot_8
-                {12.75+0.5, 2+0.3    ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
-                {18.4+0.5, -2.15+0.4 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
+                {12.75+0.3, 2+0.1  ,loop_height[4] , 0, velocityX, 0, 0, 0, 0, 0},//dot_10
+                {18.4+0.5, -1.8+0.2 ,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_14
         };
 
 double blindPoints[3][10] =
         {
                 ///x, y, z, yaw, vx, vy, vz, ax, ay, az
-                {12.75+0.5 ,2.0+0.1, 2.2  , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
-                {18.4-frontLoopDistance+0.5 , -2.15+0.2, 2.2, 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
-                {18.4-frontLoopDistance+0.5 , -2.15+0.2,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_15
+                {12.75+0.3 ,2.0+0.1, 2.7  , 0, velocityX, 0, 0, 0, 0, 0},  //dot_11
+                {18.4 - 1.4 -0.4 , -1.6 , 2.7, 0, velocityX, 0, 0, 0, 0, 0},  //dot_12
+                {21.1-0.5, 0,loop_height[5] , 0, velocityX, 0, 0, 0, 0, 0},  //dot_15
 
         };
 
@@ -119,6 +119,7 @@ bool go_to_loop(int numberLoop)
         if(isArrivedBoard(numberLoop))
         {
             loopStep=1;
+            update_drift(numberLoop);
             ROS_INFO("go to loop %d front center",numberLoop);
          
         }
@@ -212,9 +213,8 @@ void setBoardPva(int numberLoop)  //飞到牌子前面
     pvaTargetPointMsg.velocities.clear();
     pvaTargetPointMsg.accelerations.clear();
     pvaTargetPointMsg.effort.clear();
-
     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][0]-drift.x());
-    pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][1]-drift.y());
+     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][1]-drift.y());
     pvaTargetPointMsg.positions.push_back(board_height[numberLoop]-drift.z());
     pvaTargetPointMsg.positions.push_back(frontPoints[numberLoop][3]);
 
@@ -339,6 +339,8 @@ bool update_drift(int numberLoop)
         ROS_INFO("VISIONPOSE.X:  %f     dronePoseCurrent.x:  %f", visionPose.pose.position.x,dronePoseCurrent.pose.position.x);
                 ROS_INFO("VISIONPOSE.y:  %f     dronePoseCurrent.y:  %f", visionPose.pose.position.y,dronePoseCurrent.pose.position.y);
                         ROS_INFO("VISIONPOSE.z:  %f     dronePoseCurrent.z:  %f", visionPose.pose.position.z,planeCurrHeight);
+
+        ROS_INFO("DRIFT  %f   %f  %f",drift.x(),drift.y(),drift.z());
         ROS_INFO("target_p: %f  %f  %f", pvaTargetPointMsg.positions[0], pvaTargetPointMsg.positions[1], pvaTargetPointMsg.positions[2]);
         ROS_INFO("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
         return true;

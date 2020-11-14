@@ -29,7 +29,7 @@ bool blind_fly(int blindPoint)
     {
         ROS_INFO_ONCE("go to blindPoint:%d",blindPoint);
     }
-    update_drift(blindPoint);
+    //update_drift(blindPoint);
     /*drift.x() =  0;
     drift.y() = 0;
     drift.z() = 0;*/

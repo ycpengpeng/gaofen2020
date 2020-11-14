@@ -76,8 +76,9 @@ void attCallback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 
     ///TODO
     current_p << msg->pose.position.x, msg->pose.position.y, msg->pose.position.z;
-    //ROS_INFO_THROTTLE(2,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
-     ROS_ERROR_THROTTLE(2,"gf_actuator:delta_P %f %f %f",current_p(0)-planned_p(0),current_p(1)-planned_p(1),current_p(2)-planned_p(2));
+    ROS_INFO_THROTTLE(2,"current_p(0)  %f  current_p(1)  %f  current_p(2)   %f",current_p(0),current_p(1),current_p(2));
+    // ROS_ERROR_THROTTLE(2,"gf_actuator:delta_P %f %f %f",current_p(0)-planned_p(0),current_p(1)-planned_p(1),current_p(2)-planned_p(2));
+        
     current_att.w() = msg->pose.orientation.w;
     current_att.x() = msg->pose.orientation.x;
     current_att.y() = msg->pose.orientation.y;
@@ -118,7 +119,7 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
 {
     //ros::Time tmp=ros::Time::now();
 
-    ROS_ERROR_THROTTLE(10,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
+  //  ROS_ERROR_THROTTLE(10,"gf_actuator:planned_P %f %f %f",planned_p(0),planned_p(1),planned_p(2));
 
     planned_p << msg->positions[0], msg->positions[1], msg->positions[2];
     if(last_planned_p(0)==planned_p(0)&&last_planned_p(1)==planned_p(1)&&last_planned_p(2)==planned_p(2))
@@ -160,7 +161,8 @@ void zuan_quan_set_point_cb(const trajectory_msgs::JointTrajectoryPoint::ConstPt
     else if(numberloop>=0)//zuan_quan!!!!!!!!!!!!!!!!!!!!
     {
         //ROS_INFO("gf_actuator:NOW target number loop %d",numberloop);
-        ROS_ERROR_THROTTLE(1,"gf_actuator:delta_P %f %f %f",current_p(0)-planned_p(0),current_p(1)-planned_p(1),current_p(2)-planned_p(2));
+ROS_ERROR("planned_p(0)  %f  planned_p(1)  %f  planned_p(2)   %f",planned_p(0),planned_p(1),planned_p(2));
+
         planned_yaw = msg->positions[3];
         planned_v << msg->velocities[0], msg->velocities[1], msg->velocities[2];
         planned_a << msg->accelerations[0], msg->accelerations[1], msg->accelerations[2];
@@ -355,7 +357,7 @@ void setpoint_land()
         else
         {
             // ROS_INFO("LAND OVER---------------------------");
-            p_t.row(times)<<land_position(0),land_position(1),-100;
+            p_t.row(times)<<land_position(0),land_position(1),-1;
             v_t.row(times)=Vector3d::Zero();
             a_t.row(times)=Vector3d::Zero();
         }
@@ -422,50 +424,117 @@ void pva_land()
 void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d pf,Vector3d vf,Vector3d af,unsigned int &t_num,
                                   double yawf)
 {
-    double T1, T2, T3, T;
+//     double T1, T2, T3, T;
+//     double delt_x, delt_y, delt_z;
+//     //ROS_INFO("pf(0):  %f,pf(1):   %f,pf(2):   %f",pf(0),pf(1),pf(2));
+//     delt_x=pf(0)-p0(0);
+//     delt_y=pf(1)-p0(1);
+//     delt_z=pf(2)-p0(2);
+
+//     if(fabs(delt_x)>5)
+//     {
+//         delt_x = 5.0 * delt_x / fabs(delt_x);
+//     }
+//     if(fabs(delt_y)>5)
+//     {
+//         delt_y = 5.0 * delt_y / fabs(delt_y);
+//     }
+//     if(fabs(delt_z)>5)
+//     {
+//         delt_z = 5.0 * delt_z / fabs(delt_z);
+//     }
+
+//     T1 = table->query_pva_table(delt_x, v0(0), vf(0), a0(0));
+//     T2 = table->query_pva_table(delt_y, v0(1), vf(1), a0(1));
+//     T3 = table->query_pva_table(delt_z, v0(2), vf(2), a0(2));
+//     T = T1 > T2 ? T1 : T2;
+//     T = T > T3 ? T : T3;
+//     T = T < 0.5 ? 0.5 : T;
+//     if(T==-1)
+//     {
+//         ROS_INFO("T=-1////////////////");
+// /*        delt_x=pf(0)-p0(0);
+//         delt_y=pf(1)-p0(1);
+//         delt_z=pf(2)-p0(2);*/
+
+//     }
+
+//     //ROS_INFO("T:%f",T);
+//     t_num=T/delta_t;  //number of dots
+//     //ROS_INFO("computer:t_number:%d",t_num);
+//     //ROS_INFO("t_num:%d   qqq",t_num);
+//     p_t = Eigen::MatrixXd::Zero(t_num, 3);
+//     v_t = Eigen::MatrixXd::Zero(t_num, 3);
+//     a_t = Eigen::MatrixXd::Zero(t_num, 3);
+//     //t = Eigen::VectorXd::Zero(t_num);
+//     for (int column = 0; column < 3; column++)
+//     {
+//         double delt_a = af(column) - a0(column);
+//         double delt_v = vf(column) - v0(column) - a0(column)*T;
+//         double delt_p = pf(column) - p0(column) - v0(column)*T - 0.5*a0(column)*T*T;
+
+//         // % if vf is not free
+//         double alpha = delt_a*60/pow(T,3) - delt_v*360/pow(T,4) + delt_p*720/pow(T,5);
+//         double beta = -delt_a*24/pow(T,2) + delt_v*168/pow(T,3) - delt_p*360/pow(T,4);
+//         double gamma = delt_a*3/T - delt_v*24/pow(T,2) + delt_p*60/pow(T,3);
+
+
+//         for (int times = 0; times < t_num; times++)
+//         {
+
+//             //ROS_INFO("times=%d",times);
+//             double tt = (times + 1)*delta_t;
+//             p_t(times, column) = alpha / 120 * pow(tt, 5) + beta / 24 * pow(tt, 4) + gamma / 6 * pow(tt, 3) +
+//                                  a0(column) / 2 * pow(tt, 2) +v0(column) * tt + p0(column);
+//             v_t(times, column) = alpha / 24 * pow(tt, 4) + beta / 6 * pow(tt, 3) + gamma / 2 * pow(tt, 2) +
+//                                  a0(column) * tt + v0(column);
+//             a_t(times, column) = alpha / 6 * pow(tt, 3) + beta / 2 * pow(tt, 2) + gamma * tt + a0(column);
+
+//         }
+//         //ROS_INFO("p_t(t_num-1,0):  %f,p_t(t_num-1,1):  %f,p_t(t_num-1,2):  %f",p_t(t_num-1,0),p_t(t_num-1,1),p_t(t_num-1,2));
+
+//     }
+//     //ROS_INFO("p_t(t_num-1,0):  %f,p_t(t_num-1,1):  %f,p_t(t_num-1,2):  %f",p_t(t_num-1,0),p_t(t_num-1,1),p_t(t_num-1,2));
+
+//     yaw_t = Eigen::VectorXd::Zero(t_num);
+//     for(int times=0;times<t_num;times++)
+//     {
+//         yaw_t(times)=yawf;
+//     }
+ double T1, T2, T3, T;
     double delt_x, delt_y, delt_z;
     //ROS_INFO("pf(0):  %f,pf(1):   %f,pf(2):   %f",pf(0),pf(1),pf(2));
     delt_x=pf(0)-p0(0);
     delt_y=pf(1)-p0(1);
     delt_z=pf(2)-p0(2);
 
-    if(fabs(delt_x)>5)
-    {
-        delt_x = 5.0 * delt_x / fabs(delt_x);
-    }
-    if(fabs(delt_y)>5)
-    {
-        delt_y = 5.0 * delt_y / fabs(delt_y);
-    }
-    if(fabs(delt_z)>5)
-    {
-        delt_z = 5.0 * delt_z / fabs(delt_z);
-    }
+//    if(fabs(delt_x)>5)
+//    {
+//        delt_x = 5.0 * delt_x / fabs(delt_x);
+//    }
+//    if(fabs(delt_y)>5)
+//    {
+//        delt_y = 5.0 * delt_y / fabs(delt_y);
+//    }
+//    if(fabs(delt_z)>5)
+//    {
+//        delt_z = 5.0 * delt_z / fabs(delt_z);
+//    }
 
-    T1 = table->query_pva_table(delt_x, v0(0), vf(0), a0(0));
-    T2 = table->query_pva_table(delt_y, v0(1), vf(1), a0(1));
-    T3 = table->query_pva_table(delt_z, v0(2), vf(2), a0(2));
+    T1 = delt_x/0.5;  //速度设为0.5m/s
+    T2 =delt_y/0.5;
+    T3 = delt_z/0.5;
     T = T1 > T2 ? T1 : T2;
     T = T > T3 ? T : T3;
     T = T < 0.5 ? 0.5 : T;
-    if(T==-1)
-    {
-        ROS_INFO("T=-1////////////////");
-/*        delt_x=pf(0)-p0(0);
-        delt_y=pf(1)-p0(1);
-        delt_z=pf(2)-p0(2);*/
 
-    }
 
-    //ROS_INFO("T:%f",T);
     t_num=T/delta_t;  //number of dots
-    //ROS_INFO("computer:t_number:%d",t_num);
-    //ROS_INFO("t_num:%d   qqq",t_num);
     p_t = Eigen::MatrixXd::Zero(t_num, 3);
     v_t = Eigen::MatrixXd::Zero(t_num, 3);
     a_t = Eigen::MatrixXd::Zero(t_num, 3);
     //t = Eigen::VectorXd::Zero(t_num);
-    for (int column = 0; column < 3; column++)
+/*    for (int column = 0; column < 3; column++)
     {
         double delt_a = af(column) - a0(column);
         double delt_v = vf(column) - v0(column) - a0(column)*T;
@@ -481,24 +550,40 @@ void motion_primitives_with_table(Vector3d p0,Vector3d v0,Vector3d a0,Vector3d p
         {
 
             //ROS_INFO("times=%d",times);
+            int dount=0;
             double tt = (times + 1)*delta_t;
-            p_t(times, column) = alpha / 120 * pow(tt, 5) + beta / 24 * pow(tt, 4) + gamma / 6 * pow(tt, 3) +
-                                 a0(column) / 2 * pow(tt, 2) +v0(column) * tt + p0(column);
-            v_t(times, column) = alpha / 24 * pow(tt, 4) + beta / 6 * pow(tt, 3) + gamma / 2 * pow(tt, 2) +
-                                 a0(column) * tt + v0(column);
-            a_t(times, column) = alpha / 6 * pow(tt, 3) + beta / 2 * pow(tt, 2) + gamma * tt + a0(column);
+            p_t(times, column) =p0(column)+delt_x/(T/delta_t)*times;
 
+*//*            v_t(times, column) = alpha / 24 * pow(tt, 4) + beta / 6 * pow(tt, 3) + gamma / 2 * pow(tt, 2) +
+                                 a0(column) * tt + v0(column);
+            a_t(times, column) = alpha / 6 * pow(tt, 3) + beta / 2 * pow(tt, 2) + gamma * tt + a0(column);*//*
+
+        }*/
+        for(int times = 0; times < t_num; times++)
+        {
+            p_t(times, 0) =p0(0)+delt_x/(T/delta_t)*times;
         }
+        for(int times = 0; times < t_num; times++)
+        {
+            p_t(times, 1) =p0(1)+delt_y/(T/delta_t)*times;
+        }
+        for(int times = 0; times < t_num; times++)
+        {
+            p_t(times, 2) =p0(2)+delt_z/(T/delta_t)*times;
+        }
+        for(int times=0;times<t_num;times++)
+        {
+            yaw_t(times)=yawf;
+        }
+
+
         //ROS_INFO("p_t(t_num-1,0):  %f,p_t(t_num-1,1):  %f,p_t(t_num-1,2):  %f",p_t(t_num-1,0),p_t(t_num-1,1),p_t(t_num-1,2));
 
-    }
-    //ROS_INFO("p_t(t_num-1,0):  %f,p_t(t_num-1,1):  %f,p_t(t_num-1,2):  %f",p_t(t_num-1,0),p_t(t_num-1,1),p_t(t_num-1,2));
 
-    yaw_t = Eigen::VectorXd::Zero(t_num);
-    for(int times=0;times<t_num;times++)
-    {
-        yaw_t(times)=yawf;
-    }
+
+
+
+
 }
 
 void setPVA(Eigen::Vector3d p, Eigen::Vector3d v, Eigen::Vector3d a, double yaw=0.0)
